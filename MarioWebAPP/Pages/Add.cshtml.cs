@@ -90,23 +90,71 @@ namespace MarioWebAPP.Pages
             List<string> City = new List<string>();
             var results = new Dictionary<string, List<string>>();
 
+            //try
+            //{
+            //    var conn = new DapperConnections.ConnectionOptions();
+            //    Configuration.GetSection(DapperConnections.ConnectionOptions.Position).Bind(conn);
+            //    var sql = "select Country,City from CountryInfo";
+
+            //    using(var con=new SqlConnection(conn.RookieServerContext))
+            //    {
+            //var result=con.Query(sql).ToList();
+            //var resultDict = new Dictionary<string, List<string>>();
+
+            //var resultDict=result
+            //    .GroupBy(r=>r.Country,r=>r.City)
+            //    .ToDictionary(g=>g.Key,g=>new {name=g.Key,city=g.ToList() });
+
+            //foreach (var item in result)
+            //{
+            //    if (resultDict.ContainsKey(item.Country))
+            //    {
+            //        resultDict[item.Country].Add(item.City);
+            //    }
+            //    else
+            //    {
+            //        resultDict[item.Country] = new List<string> { item.City };
+            //    }
+            //}
+
+            //        var countryCityResult = con.Query(sql).ToList();
+            //        var result = new List<object>();
+
+            //        foreach (var item in countryCityResult.GroupBy(x => x.Country))
+            //        {
+            //            var country = item.Key;
+            //            var cities = item.Select(x => x.City).ToList();
+            //            var obj = new { name = country, city = cities };
+            //            result.Add(obj);
+            //        }
+
+            //        return new JsonResult(resultDict);
+            //    }
+
+
+            //}
+
             try
             {
                 var conn = new DapperConnections.ConnectionOptions();
                 Configuration.GetSection(DapperConnections.ConnectionOptions.Position).Bind(conn);
-                var sql = "select Country,City from CountryInfo";
-                
-                using(var con=new SqlConnection(conn.RookieServerContext))
+                var sql = "SELECT Country, City FROM CountryInfo";
+
+                using (var con = new SqlConnection(conn.RookieServerContext))
                 {
-                    var result=con.Query(sql).ToList();
-                    var resultDict=result
-                        .GroupBy(r=>r.Country,r=>r.City)
-                        .ToDictionary(g=>g.Key,g=>g.ToList());
+                    var countryCityResult = con.Query(sql).ToList();
+                    var result = new List<object>();
 
-                    return new JsonResult(resultDict);
+                    foreach (var item in countryCityResult.GroupBy(x => x.Country))
+                    {
+                        var country = item.Key;
+                        var cities = item.Select(x => x.City).ToList();
+                        var obj = new { name = country, city = cities };
+                        result.Add(obj);
+                    }
+
+                    return new JsonResult(result);
                 }
-
-
             }
             catch (Exception ex)
             {

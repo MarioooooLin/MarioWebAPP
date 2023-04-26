@@ -30,21 +30,28 @@
                 </div>
                 <div class="row">
                     <div class="form-group col-6">
-                        <label for="">Country <span class="text-danger fw-bold">*</span></label>
+@*                        <label for="">Country <span class="text-danger fw-bold">*</span></label>
 
                         <select name="Country" id="country" v-model="selectedCountry" class="d-block form-select">
                             <option value="" selected disabled>-Select-</option>
                             <option :value="cou" v-for="(cou, index) in country" :key="index">{{cou}}</option>
-                        </select>
-                    </div>
+                        </select>                        
+*@                    
+
+                        <selectcomponent v-model="countryIndex" :options="country" :value="countryIndex" class="d-block form-select"/>
+
+</div>
                     <div class="form-group col-6">
-                        <label for="City">City <span class="text-danger fw-bold">*</span></label>
+@*                        <label for="City">City <span class="text-danger fw-bold">*</span></label>
 
                         <select name="City" id="city" v-model="selectedCity" class="d-block form-select">
                             <option value="" selected disabled>-Select-</option>
                             <option :value="cit" v-for="(cit, index) in city" :key="index">{{cit}}</option>
                         </select>
-                    </div>
+*@
+                    <selectcomponent v-model="cityIndex" :options="cityOptions" :value="cityIndex" class="d-block form-select"/>
+
+</div>
                 </div>
                 <div class="row">
                     <div class="col-6">
@@ -75,7 +82,7 @@
                         <label for="Sales">Sales <span class="text-danger fw-bold">*</span></label>
 
                         <select name="Sales" id="sales" class="d-block form-select" v-model="selectedSales">
-                            <option :value="" selected disabled>-Select-</option>
+                            <option  selected disabled>-Select-</option>
                             <option :value="sa" v-for="(sa, index) in sales" :key="index">{{sa}}</option>
                         </select>
 
@@ -161,6 +168,28 @@
     </div>
 </div>
 <script>
+
+        const selectcomponent = {
+  props: ["options", "value"],
+  template: `
+    <select v-model="index">
+      <option v-for="(item, i) in options" :value="i">
+        {{ item.name }}
+      </option>
+    </select>
+  `,
+  computed: {
+    index: {
+      get() {
+        return this.value;
+      },
+      set(index) {
+        this.$emit("input", index);
+      }
+    }
+  }
+};
+
     const vm = Vue.createApp({
         data() {
             return {
@@ -176,7 +205,9 @@
                 selectedSales:["a","b"],
                 selectedCountry:"",
                 selectedCity:"",
-                test:""
+                test:"",
+                countryIndex: 2,
+                  cityIndex: 0
             };
         },
             async created() {
@@ -186,15 +217,41 @@
 
             mounted(){
                 this.getSales();
-                this.getCountry();
+               // this.getCountry();
                 //this.getCity();
                 this.test1();
+                this.getCountryAndCity();
             },
 
 
         computed: {
-
+            //country() {
+            //      return country;
+            //      console.log(this.country)
+            //},
+            //city() {
+              //    return this.country[this.countryIndex].city;
+            //},
+            city() {
+        if (this.country) {
+            return this.country[this.countryIndex].city;
+        }
+        return [];
+    },
+            cityOptions() {
+                  const city = this.city;
+                  //console.log(city);
+//                  const cities = proxyArray.map(item => item.city).flat();
+//console.log(cities);
+                  //return city.map(x=>{name:x});
+            }
         },
+        components: {
+            selectcomponent
+      },
+      watch:{
+
+      },
 
         methods: {
             removeSales() { },
@@ -208,7 +265,6 @@
              async getSales(){ 
                var _this = this;
                let result=await $axiosPost(this.localRouter+"?handler=GetSales");
-               //_this.remark="result";
                this.sales=result;
                console.log(result);
                console.log(this.sales)
@@ -216,14 +272,12 @@
             async getCountry(){
                var _this = this;
                let result=await $axiosPost(this.localRouter+"?handler=GetCountry");
-               //_this.remark="result";
                this.country=result;
                console.log(this.country)
             },
                async getCity(){
                var _this = this;
                let result=await $axiosPost(this.localRouter+"?handler=GetCity");
-               //_this.remark="result";
                this.city=result;
                //console.log(this.city)
             },
@@ -232,11 +286,17 @@
                     let result=await $axiosPost(this.localRouter+"?handler=GetCountryCity");
                     this.city=result;
                     console.log(this.city)
-                }
+                },
+                async getCountryAndCity() {
+        await this.getCountry();
+        await this.getCity();
+    },
 
         },
     });
     vm.mount("#root");
+
+
 </script>
 
 @*
