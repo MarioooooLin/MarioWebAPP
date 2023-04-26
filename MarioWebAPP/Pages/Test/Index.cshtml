@@ -1,0 +1,39 @@
+﻿@page
+@model MarioWebAPP.Pages.Test.IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+<div id="root">
+<button v-on:click="test1()">Click</button>
+<div>Show</div>
+</div>
+
+
+@section Scripts{
+    <script type="text/javascript">
+        const vm = Vue.createApp({
+            data(){
+                return{
+                localRouter:'',
+                result:"",  
+                }
+            },
+            async created() {
+                this.localRouter = await window.location.pathname;
+                console.log(this.localRouter);
+            },
+
+            methods:{
+                async test1(){
+                    let result = await $axiosPost(this.localRouter + '?handler=Test1');
+                    //let result = await $axiosPost(this.localRouter);
+                    console.log(this.result);
+                    //console.log('Click', result);
+                    //await alert('TEEST')
+            }
+            },
+        }).mount('#root')
+    </script>
+
+
+}
