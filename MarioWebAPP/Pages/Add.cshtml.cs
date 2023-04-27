@@ -68,21 +68,21 @@ namespace MarioWebAPP.Pages
 
         }
 
-        //public IActionResult OnPostGetCity()
-        //{
-        //    //var conn = new DapperConnections.ConnectionOptions();
-        //    //Configuration.GetSection(DapperConnections.ConnectionOptions.Position).Bind(conn);
-        //    //var sql = @"select City from CountryInfo where Country = @countries";
-        //    //using (var con = new SqlConnection(conn.RookieServerContext))
-        //    //{
-        //    //    var result = con.Query<string>(sql,new {countries =new []
-        //    //    {
-        //    //        "USA","Japan","Spain"
-        //    //    } }).ToList();
-        //    //    return new JsonResult(result);
-        //    //}
+        public IActionResult OnPostGetCity(IFormCollection countryCollection)
+        {
+            var selectCity = countryCollection["country"].ToString();
 
-        //}
+            var conn = new DapperConnections.ConnectionOptions();
+            Configuration.GetSection(DapperConnections.ConnectionOptions.Position).Bind(conn);
+            var sql = @"select City from CountryInfo where Country = @countries";
+            using (var con = new SqlConnection(conn.RookieServerContext))
+            {
+                var result = con.Query<string>(sql, new
+                { countries = selectCity
+                }).ToList();
+                return new JsonResult(result);
+            }
+        }
 
 
         public IActionResult OnPostGetCountryCity()

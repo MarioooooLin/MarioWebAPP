@@ -30,28 +30,28 @@
                 </div>
                 <div class="row">
                     <div class="form-group col-6">
-@*                        <label for="">Country <span class="text-danger fw-bold">*</span></label>
+                        <label for="">Country <span class="text-danger fw-bold">*</span></label>
 
                         <select name="Country" id="country" v-model="selectedCountry" class="d-block form-select">
                             <option value="" selected disabled>-Select-</option>
                             <option :value="cou" v-for="(cou, index) in country" :key="index">{{cou}}</option>
-                        </select>                        
-*@                    
+                        </select>
 
-                        <selectcomponent v-model="countryIndex" :options="country" :value="countryIndex" class="d-block form-select"/>
 
-</div>
+                        @*                        <selectcomponent v-model="countryIndex" :options="country" :value="countryIndex" class="d-block form-select"/>
+                        *@
+                    </div>
                     <div class="form-group col-6">
-@*                        <label for="City">City <span class="text-danger fw-bold">*</span></label>
+                        <label for="City">City <span class="text-danger fw-bold">*</span></label>
 
                         <select name="City" id="city" v-model="selectedCity" class="d-block form-select">
                             <option value="" selected disabled>-Select-</option>
                             <option :value="cit" v-for="(cit, index) in city" :key="index">{{cit}}</option>
                         </select>
-*@
-                    <selectcomponent v-model="cityIndex" :options="cityOptions" :value="cityIndex" class="d-block form-select"/>
 
-</div>
+                        @*                    <selectcomponent v-model="cityIndex" :options="cityOptions" :value="cityIndex" class="d-block form-select"/>
+                        *@
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col-6">
@@ -81,19 +81,19 @@
                         <!-- v-if處理 -->
                         <label for="Sales">Sales <span class="text-danger fw-bold">*</span></label>
 
-                        <select name="Sales" id="sales" class="d-block form-select" v-model="selectedSales">
-                            <option  selected disabled>-Select-</option>
-                            <option :value="sa" v-for="(sa, index) in sales" :key="index">{{sa}}</option>
+                        <select name="Sales" id="sales" class="d-block form-select" v-model="selectedSales" @@change="addToSalesList">
+                            <option selected disabled>-Select-</option>
+                            <option :value="sa" v-for="(sa, index) in sales" :key="index" v-if="salesStatus">{{sa}}</option>
                         </select>
 
-                        <div class="d-inline-flex w-auto">
-                            <div class="w-auto h-25 border border-dark mt-1 d-inline mr-2 font-weight-bold"
-                                 v-for="(sesa,index) in selectedSales"
-                                 :key="index">
-                                {{sesa}}
+                        <ul class="d-inline-flex w-auto">
+                            <li class="w-auto h-25 border border-dark mt-1 d-inline mr-2 font-weight-bold"
+                                v-for="(sesa,index) in salesList"
+                                :key="index" >
+                                {{index}} {{sesa}}
                                 <button :click="removeSales()" class="btn btn-primary btn-sm">Remove</button>
-                            </div>
-                        </div>
+                            </li>
+                        </ul>
                     </div>
                 </div>
                 <div class="form-group border-primary">
@@ -161,34 +161,13 @@
                 </div>
 
                 <div class="form-group form-check"></div>
-                <button type="submit" class="btn btn-primary mx-3">Submit</button>
-                <button type="" class="btn btn-primary mx-3"   >Cancel</button>
+                <button type="submit" class="btn btn-primary mx-3" >Submit</button>
+                <button type="" class="btn btn-primary mx-3">Cancel</button>
             </form>
         </div>
     </div>
 </div>
 <script>
-
-        const selectcomponent = {
-  props: ["options", "value"],
-  template: `
-    <select v-model="index">
-      <option v-for="(item, i) in options" :value="i">
-        {{ item.name }}
-      </option>
-    </select>
-  `,
-  computed: {
-    index: {
-      get() {
-        return this.value;
-      },
-      set(index) {
-        this.$emit("input", index);
-      }
-    }
-  }
-};
 
     const vm = Vue.createApp({
         data() {
@@ -201,27 +180,28 @@
                 country: "",
                 city: "",
                 sales: [],
-                localRouter:"",
-                selectedSales:["a","b"],
-                selectedCountry:"",
-                selectedCity:"",
-                test:"",
+                salesList: [],
+                localRouter: "",
+                selectedSales: "",
+                selectedCountry: "",
+                selectedCity: "",
+                test: "",
                 countryIndex: 2,
-                  cityIndex: 0
+                cityIndex: 0,
+                salesStatus: true,
             };
         },
-            async created() {
-                this.localRouter = await window.location.pathname;
-                console.log(this.localRouter);
-            },
+        async created() {
+            this.localRouter = await window.location.pathname;
+            console.log(this.localRouter);
+        },
 
-            mounted(){
-                this.getSales();
-               // this.getCountry();
-                //this.getCity();
-                this.test1();
-                this.getCountryAndCity();
-            },
+        mounted() {
+            this.getSales();
+            this.getCountry();
+            //this.test1();
+            //this.getCountryAndCity();
+        },
 
 
         computed: {
@@ -230,67 +210,122 @@
             //      console.log(this.country)
             //},
             //city() {
-              //    return this.country[this.countryIndex].city;
+            //          //    return this.country[this.countryIndex].city;
+            //        //},
+            //        city() {
+            //    if (this.country) {
+            //        return this.country[this.countryIndex].city;
+            //    }
+            //    return [];
             //},
-            city() {
-        if (this.country) {
-            return this.country[this.countryIndex].city;
-        }
-        return [];
-    },
-            cityOptions() {
-                  const city = this.city;
-                  //console.log(city);
-//                  const cities = proxyArray.map(item => item.city).flat();
-//console.log(cities);
-                  //return city.map(x=>{name:x});
+            //        cityOptions() {
+            //              const city = this.city;
+            //console.log(city);
+            //                  const cities = proxyArray.map(item => item.city).flat();
+            //console.log(cities);
+            //return city.map(x=>{name:x});
+
+
+        },
+        //  components: {
+        //      //selectcomponent
+        //},
+        watch: {
+            selectedCountry(n, o) {
+                if (n != "") {
+                    this.getCity()
+                    //async getCity() {
+                    //    var _this = this;
+                    //    let fd = new FormData();
+                    //    //console.log(_this.country)
+                    //    fd.append("country", n)
+                    //    let result = await $axiosPost(this.localRouter + "?handler=GetCity", fd);
+                    //    this.city = result;
+                    //    console.log(this.city)
+                    //console.log(n)
+
+                    //console.log("aa")
+                    //}
+                }
             }
         },
-        components: {
-            selectcomponent
-      },
-      watch:{
 
-      },
+
 
         methods: {
-            removeSales() { },
-            submit() { },
+            removeSales() {
+                Array.prototype.remove = function (value) {
+                    var index = this.indexOf(value);
+                    if (index !== -1) {
+                        this.splice(index, 1);
+                    }
+                }
+                var arr= this.salesList;
+                var item= this.selectedSales.index;
+                console.log(this.selectedSales.index)
+
+                arr.remove(item);
+                console.log(arr)
+            },
+
+        
+            submit() {
+                if (this.country == "" && this.city == "" && this.account == "" && this.name == "" ) {
+                    alert("請完成紅星部分")
+                } else {
+
+                }
+            },
             cancel() {
                 document.getElementById("account").innerHTML = "";
                 document.getElementById("name").innerHTML = "";
                 document.getElementById("remark").innerHTML = "";
                 this.data.interested = [];
             },
-             async getSales(){ 
-               var _this = this;
-               let result=await $axiosPost(this.localRouter+"?handler=GetSales");
-               this.sales=result;
-               console.log(result);
-               console.log(this.sales)
+            async getSales() {
+                var _this = this;
+                let result = await $axiosPost(this.localRouter + "?handler=GetSales");
+                this.sales = result;
+               //  console.log(result);
+               //  console.log(this.sales)
             },
-            async getCountry(){
-               var _this = this;
-               let result=await $axiosPost(this.localRouter+"?handler=GetCountry");
-               this.country=result;
-               console.log(this.country)
+            async getCountry() {
+                var _this = this;
+                let result = await $axiosPost(this.localRouter + "?handler=GetCountry");
+                this.country = result;
+               // console.log(this.country)
             },
-               async getCity(){
-               var _this = this;
-               let result=await $axiosPost(this.localRouter+"?handler=GetCity");
-               this.city=result;
-               //console.log(this.city)
+            async getCity() {
+                var _this = this;
+                let fd = new FormData();
+                fd.append("country", _this.selectedCountry)
+                let result = await $axiosPost(this.localRouter + "?handler=GetCity", fd);
+                this.city = result;
+                //console.log(this.city)
             },
-                async test1(){
-                    var _this=this;
-                    let result=await $axiosPost(this.localRouter+"?handler=GetCountryCity");
-                    this.city=result;
-                    console.log(this.city)
-                },
-                async getCountryAndCity() {
-        await this.getCountry();
-        await this.getCity();
-    },
+
+            async test1() {
+                var _this = this;
+                let result = await $axiosPost(this.localRouter + "?handler=GetCountryCity");
+                this.city = result;
+                //console.log(this.city)
+            },
+            async getCountryAndCity() {
+                //await this.getCountry();
+                // await this.getCity();
+            },
+            addToSalesList() {
+                this.salesList.push(this.selectedSales);
+                console.log(this.selectedSales)
+            },
+            //checkSales() {
+            //    console.log(this.salesList.includes(sa))
+            //},
+            checkedSales() {
+                //console.log(this.selectedSales)
+                this.salesStatus = this.salesList.includes(this.selectedSales)
+                console.log(salesStatus);
+            }
 
         },
     });
@@ -299,12 +334,3 @@
 
 </script>
 
-@*
-                              //SALES LIST
-               // let _this = this;
-               //let result=await $axiosPost(this.localRouter+"?handler=GetSales");
-               //_this.remark="result";
-               //_this.sales=result;
-               //console.log(result);
-               //console.log(this.sales)
-*@
