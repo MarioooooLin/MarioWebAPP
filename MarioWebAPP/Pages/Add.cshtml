@@ -11,6 +11,7 @@
                 <div class="Title"><h2>Create new account</h2></div>
                 <div class="row">
                     <div class="form-group col-6">
+                        @*帳號*@
                         <label for="Account">Account <span class="text-danger fw-bold">*</span></label>
                         <input type="email"
                                class="form-control"
@@ -18,26 +19,28 @@
                                aria-describedby="emailHelp"
                                placeholder="Email"
                                v-model.trim="account"
-                               name="account"
-                                                              />
-                   
+                               name="account" 
+                               required/>
+
                     </div>
                     <div class="form-group col-6">
+                        @*密碼*@
                         <label for="Password">Name <span class="text-danger fw-bold">*</span></label>
                         <input type="text"
                                class="form-control"
                                id="name"
                                placeholder="Name"
                                v-model.trim="name" 
-                               />
+                               required/>
                     </div>
                 </div>
                 <div class="row">
                     <div class="form-group col-6">
+                        @*國家*@
                         <label for="">Country <span class="text-danger fw-bold">*</span></label>
 
-                        <select name="Country" id="country" v-model="selectedCountry" class="d-block form-select" >
-                            <option value="" selected disabled>-Select-</option>
+                        <select name="Country" id="country" v-model="selectedCountry" class="d-block form-select">
+                            <option value="-Select-" selected disabled>-Select-</option>
                             <option :value="cou" v-for="(cou, index) in country" :key="index">{{cou}}</option>
                         </select>
 
@@ -46,9 +49,10 @@
                         *@
                     </div>
                     <div class="form-group col-6">
+                        @*城市*@
                         <label for="City">City <span class="text-danger fw-bold">*</span></label>
 
-                        <select name="City" id="city" v-model="selectedCity" class="d-block form-select" >
+                        <select name="City" id="city" v-model="selectedCity" class="d-block form-select">
                             <option value="" selected disabled>-Select-</option>
                             <option :value="cit" v-for="(cit, index) in city" :key="index">{{cit}}</option>
                         </select>
@@ -59,6 +63,7 @@
                 </div>
                 <div class="row">
                     <div class="col-6">
+                        @*性別*@
                         <label for="">Gender</label>
                         <div class="d-flex">
                             <div class="form-check">
@@ -84,24 +89,24 @@
                     <div class="form-group col-6">
                         <!-- v-if處理 -->
                         <label for="Sales">Sales <span class="text-danger fw-bold">*</span></label>
-
-                        <select name="Sales" id="sales" class="d-block form-select" v-model="selectedSales" @@change="addToSalesList" >
-                            <option selected disabled>-Select-</option>
-                            <option :value="sa" v-for="(sa, index) in sales" :key="index" v-if="salesStatus">{{sa}}</option>
+                        @*業務*@
+                        <select name="Sales" id="sales" class="d-block form-select" v-model="selectedSales" @@change="addToSalesList">
+                            <option value="" selected disabled>-Select-</option>
+                            <option :value="sa" v-for="(sa, index) in sales" :key="index" >{{sa}}</option>
                         </select>
 
                         <ul class="d-inline-flex w-auto">
-
                             <li class="w-auto h-25 border border-dark mt-1 d-inline mr-2 font-weight-bold"
                                 v-for="(sesa,index) in salesList"
                                 :key="sesa">
-                                {{index}} {{sesa}}
+                                {{sesa}}
                                 <button @@click="removeSales(index)" class="btn btn-primary btn-sm">Remove</button>
                             </li>
                         </ul>
                     </div>
                 </div>
                 <div class="form-group border-primary">
+                    @*感興趣產品*@
                     <p>Your interested products:</p>
                     <div class="border h-auto p-2">
                         <span class="ml-3">
@@ -166,8 +171,8 @@
                 </div>
 
                 <div class="form-group form-check"></div>
-                <button type="" class="btn btn-primary mx-3">Submit</button>
-                <button type="" class="btn btn-primary mx-3">Cancel</button>
+                <button type="submit" class="btn btn-primary mx-3" @@click="submit">Submit</button>
+                <button type="reset" class="btn btn-primary mx-3" @@click="cancel()">Cancel</button>
             </form>
         </div>
     </div>
@@ -194,8 +199,8 @@
                 countryIndex: 2,
                 cityIndex: 0,
                 salesStatus: true,
-                accountError:false,
-                accountErrMsg:""
+                accountError: false,
+                accountErrMsg: ""
             };
         },
         async created() {
@@ -213,6 +218,9 @@
 
 
         computed: {
+            //remainSales(){
+            //    return this.sales.filter((sesa)=>!this.salesList.includes(sesa))
+            //}
             //country() {
             //      return country;
             //      console.log(this.country)
@@ -257,49 +265,53 @@
                 }
             },
             account: function () {
-            var isMail = /^\w+((-\w+)|(\.\w+))*\@@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z]+$/;
-            if (!isMail.test(this.email)) {
-                this.emailError = true;
-                this.emailErrMsg = 'email格式錯誤';
+                var isMail = /^\w+((-\w+)|(\.\w+))*\@@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z]+$/;
+                if (!isMail.test(this.email)) {
+                    this.emailError = true;
+                    this.emailErrMsg = 'email格式錯誤';
+                }
+                else {
+                    this.emailError = false;
+                }
             }
-            else {
-                this.emailError = false;
-            }
-        }
         },
 
 
 
         methods: {
             removeSales(index) {
-                //Array.prototype.remove = function (value) {
-                //    var index = this.indexOf(value);
-                //    if (index !== -1) {
-                //        this.splice(index, 1);
-                //    }
-                //}
-                //var arr = this.salesList;
-                //var item = this.index;
-                //console.log(this.index)
-
-                //arr.remove(item);
-                //console.log(arr)
-                this.salesList.splice(index,1)
+                this.salesList.splice(index, 1)
             },
+            //removeFromSales(sa) {
+            //    var index = this.sales.indexOf(sa);
+            //    if (index > -1) {
+            //        this.sales.splice(index, 1)
+            //    }
+            //},
 
+            async submit() {
+                //if (this.country == "" || this.city == "" || this.account == "" || this.name == "" || this.salesList.length == 0) {
+                //    alert("請完成紅星部分")
+                //} else {
 
-            submit() {
-                if (this.country == "" || this.city == "" || this.account == "" || this.name == "" || this.salesList.length == 0) {
-                    alert("請完成紅星部分")
-                } else {
+                //}
+                var _this = this;
+                let fd = new FormData();
+                fd.append("account", _this.account)
+                fd.append("name", _this.name)
+                fd.append("country", _this.selectedCountry)
+                fd.append("city", _this.selectedCity)
+                fd.append("gender", _this.gender)
+                fd.append("remark", _this.remark)
+                let result = await $axiosPost(this.localRouter + "?handler=Submit", fd);
+                //this.city = result;
 
-                }
             },
             cancel() {
                 document.getElementById("account").innerHTML = "";
                 document.getElementById("name").innerHTML = "";
                 document.getElementById("remark").innerHTML = "";
-                this.data.interested = [];
+                this.interested = [];
             },
             async getSales() {
                 var _this = this;
@@ -334,7 +346,9 @@
                 // await this.getCity();
             },
             addToSalesList() {
-                this.salesList.push(this.selectedSales);
+                if (!this.salesList.includes(this.selectedSales)) {
+                    this.salesList.push(this.selectedSales);
+                }
                 console.log(this.selectedSales)
             },
             //checkSales() {

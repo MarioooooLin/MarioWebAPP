@@ -29,7 +29,7 @@ namespace MarioWebAPP.Pages
             }
         }
 
-        [HttpGet]
+        //[HttpGet]
         //public IEnumerable<GetSalesList> GetSales() {
         //    var conn = new DapperConnections.ConnectionOptions();
         //    Configuration.GetSection(DapperConnections.ConnectionOptions.Position).Bind(conn);
@@ -78,7 +78,8 @@ namespace MarioWebAPP.Pages
             using (var con = new SqlConnection(conn.RookieServerContext))
             {
                 var result = con.Query<string>(sql, new
-                { countries = selectCity
+                {
+                    countries = selectCity
                 }).ToList();
                 return new JsonResult(result);
             }
@@ -90,6 +91,7 @@ namespace MarioWebAPP.Pages
             List<string> City = new List<string>();
             var results = new Dictionary<string, List<string>>();
 
+            #region
             //try
             //{
             //    var conn = new DapperConnections.ConnectionOptions();
@@ -133,6 +135,7 @@ namespace MarioWebAPP.Pages
 
 
             //}
+            #endregion
 
             try
             {
@@ -177,6 +180,54 @@ namespace MarioWebAPP.Pages
 
         //}
 
+        public async Task<IActionResult> OnPostSubmit(IFormCollection memberCollection)
+        {
 
+            //NEW
+            var conn = new DapperConnections.ConnectionOptions();
+            Configuration.GetSection(DapperConnections.ConnectionOptions.Position).Bind(conn);
+            var sql =
+                @"insert into UserInfo 
+                (MemberNo,CreateDate,Name,Account,Country,City,Gender,Remark,UpdateTime,UpdateBy) 
+                values 
+                (@MemberNo,@CreateDate,@Name,@Account,@Country,@City,@Gender,@Remark,@UpdateTime,@UpdateBy)";
+            using (var con = new SqlConnection(conn.RookieServerContext))
+            {
+                var curDate = DateTime.Now.ToString("yyyyMMdd");
+                var createDate = DateTime.Now;
+                var updateTime = DateTime.Now;
+                var maxID = await con.ExecuteScalarAsync<int?>("select max(cast(substring(MemberNo,12,3) as int)) from UserInfo where MemberNo like @Prefix", new { Prefix = $"Mem{curDate}%" }) ?? 0;
+
+                var newSequence = (maxID + 1).ToString().PadLeft(3, '0');
+                var newId = $"Mem{curDate}{newSequence}";
+                var rowsAffected = await con.ExecuteAsync(sql, new
+                {
+                    MemberNo = newId,
+                    CreateDate = createDate,
+                    Name = memberCollection["Name"].ToString(),
+                    Account = memberCollection["Account"].ToString(),
+                    Country = memberCollection["Country"].ToString(),
+                    City = memberCollection["City"].ToString(),
+                    Gender = memberCollection["Gender"].ToString(),
+                    Remark = memberCollection["Remark"].ToString(),
+                    UpdateTime = updateTime,
+                    UpdateBy = "System"
+                });
+                if (rowsAffected == 1)
+                {
+                    return new OkResult();
+                }
+                else
+                {
+                    return new BadRequestResult();
+                }
+            }
+
+        }
+
+
+
+
+        }
     }
-}
+
