@@ -29,17 +29,6 @@ namespace MarioWebAPP.Pages
             }
         }
 
-        //[HttpGet]
-        //public IEnumerable<GetSalesList> GetSales() {
-        //    var conn = new DapperConnections.ConnectionOptions();
-        //    Configuration.GetSection(DapperConnections.ConnectionOptions.Position).Bind(conn);
-        //    var sql = "select Sales from SalesData";
-        //    using (var con=new SqlConnection(conn.RookieServerContext))
-        //    {
-        //        var result= con.Query<GetSalesList>(sql);
-        //        return result;
-        //    }
-        //}
 
 
         [HttpPost]
@@ -86,85 +75,39 @@ namespace MarioWebAPP.Pages
         }
 
 
-        public IActionResult OnPostGetCountryCity()
-        {
-            List<string> City = new List<string>();
-            var results = new Dictionary<string, List<string>>();
+        //public IActionResult OnPostGetCountryCity()
+        //{
+        //    List<string> City = new List<string>();
+        //    var results = new Dictionary<string, List<string>>();
 
-            #region
-            //try
-            //{
-            //    var conn = new DapperConnections.ConnectionOptions();
-            //    Configuration.GetSection(DapperConnections.ConnectionOptions.Position).Bind(conn);
-            //    var sql = "select Country,City from CountryInfo";
+        //    try
+        //    {
+        //        var conn = new DapperConnections.ConnectionOptions();
+        //        Configuration.GetSection(DapperConnections.ConnectionOptions.Position).Bind(conn);
+        //        var sql = "SELECT Country, City FROM CountryInfo";
 
-            //    using(var con=new SqlConnection(conn.RookieServerContext))
-            //    {
-            //var result=con.Query(sql).ToList();
-            //var resultDict = new Dictionary<string, List<string>>();
+        //        using (var con = new SqlConnection(conn.RookieServerContext))
+        //        {
+        //            var countryCityResult = con.Query(sql).ToList();
+        //            var result = new List<object>();
 
-            //var resultDict=result
-            //    .GroupBy(r=>r.Country,r=>r.City)
-            //    .ToDictionary(g=>g.Key,g=>new {name=g.Key,city=g.ToList() });
+        //            foreach (var item in countryCityResult.GroupBy(x => x.Country))
+        //            {
+        //                var country = item.Key;
+        //                var cities = item.Select(x => x.City).ToList();
+        //                var obj = new { name = country, city = cities };
+        //                result.Add(obj);
+        //            }
 
-            //foreach (var item in result)
-            //{
-            //    if (resultDict.ContainsKey(item.Country))
-            //    {
-            //        resultDict[item.Country].Add(item.City);
-            //    }
-            //    else
-            //    {
-            //        resultDict[item.Country] = new List<string> { item.City };
-            //    }
-            //}
+        //            return new JsonResult(result);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
 
-            //        var countryCityResult = con.Query(sql).ToList();
-            //        var result = new List<object>();
-
-            //        foreach (var item in countryCityResult.GroupBy(x => x.Country))
-            //        {
-            //            var country = item.Key;
-            //            var cities = item.Select(x => x.City).ToList();
-            //            var obj = new { name = country, city = cities };
-            //            result.Add(obj);
-            //        }
-
-            //        return new JsonResult(resultDict);
-            //    }
-
-
-            //}
-            #endregion
-
-            try
-            {
-                var conn = new DapperConnections.ConnectionOptions();
-                Configuration.GetSection(DapperConnections.ConnectionOptions.Position).Bind(conn);
-                var sql = "SELECT Country, City FROM CountryInfo";
-
-                using (var con = new SqlConnection(conn.RookieServerContext))
-                {
-                    var countryCityResult = con.Query(sql).ToList();
-                    var result = new List<object>();
-
-                    foreach (var item in countryCityResult.GroupBy(x => x.Country))
-                    {
-                        var country = item.Key;
-                        var cities = item.Select(x => x.City).ToList();
-                        var obj = new { name = country, city = cities };
-                        result.Add(obj);
-                    }
-
-                    return new JsonResult(result);
-                }
-            }
-            catch (Exception ex)
-            {
-
-            }
-            return new JsonResult(null);
-        }
+        //    }
+        //    return new JsonResult(null);
+        //}
 
         //public IActionResult OnPostTest()
         //{

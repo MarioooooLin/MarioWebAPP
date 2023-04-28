@@ -82,7 +82,6 @@
                         </div>
                     </div>
                     <div class="form-group col-6">
-                        <!-- v-if處理 -->
                         <label for="Sales">Sales <span class="text-danger fw-bold">*</span></label>
                         @*業務*@
                         <select name="Sales" id="sales" class="d-block form-select" v-model="selectedSales" @@change="addToSalesList">
@@ -271,11 +270,11 @@
                 this.city = result;
             },
 
-            async test1() {
-                var _this = this;
-                let result = await $axiosPost(this.localRouter + "?handler=GetCountryCity");
-                this.city = result;
-            },
+            //async test1() {
+            //    var _this = this;
+            //    let result = await $axiosPost(this.localRouter + "?handler=GetCountryCity");
+            //    this.city = result;
+            //},
             addToSalesList() {
                 if (!this.salesList.includes(this.selectedSales)) {
                     this.salesList.push(this.selectedSales);
