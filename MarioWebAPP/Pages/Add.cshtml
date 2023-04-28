@@ -19,8 +19,8 @@
                                aria-describedby="emailHelp"
                                placeholder="Email"
                                v-model.trim="account"
-                               name="account" 
-                               required/>
+                               name="account"
+                               required />
 
                     </div>
                     <div class="form-group col-6">
@@ -30,8 +30,8 @@
                                class="form-control"
                                id="name"
                                placeholder="Name"
-                               v-model.trim="name" 
-                               required/>
+                               v-model.trim="name"
+                               required />
                     </div>
                 </div>
                 <div class="row">
@@ -44,9 +44,6 @@
                             <option :value="cou" v-for="(cou, index) in country" :key="index">{{cou}}</option>
                         </select>
 
-
-                        @*                        <selectcomponent v-model="countryIndex" :options="country" :value="countryIndex" class="d-block form-select"/>
-                        *@
                     </div>
                     <div class="form-group col-6">
                         @*城市*@
@@ -57,8 +54,6 @@
                             <option :value="cit" v-for="(cit, index) in city" :key="index">{{cit}}</option>
                         </select>
 
-                        @*                    <selectcomponent v-model="cityIndex" :options="cityOptions" :value="cityIndex" class="d-block form-select"/>
-                        *@
                     </div>
                 </div>
                 <div class="row">
@@ -92,7 +87,7 @@
                         @*業務*@
                         <select name="Sales" id="sales" class="d-block form-select" v-model="selectedSales" @@change="addToSalesList">
                             <option value="" selected disabled>-Select-</option>
-                            <option :value="sa" v-for="(sa, index) in sales" :key="index" >{{sa}}</option>
+                            <option :value="sa" v-for="(sa, index) in sales" :key="index">{{sa}}</option>
                         </select>
 
                         <ul class="d-inline-flex w-auto">
@@ -177,6 +172,7 @@
         </div>
     </div>
 </div>
+
 <script>
 
     const vm = Vue.createApp({
@@ -212,56 +208,15 @@
 
         mounted() {
             this.getCountry();
-            //this.test1();
-            //this.getCountryAndCity();
         },
 
 
         computed: {
-            //remainSales(){
-            //    return this.sales.filter((sesa)=>!this.salesList.includes(sesa))
-            //}
-            //country() {
-            //      return country;
-            //      console.log(this.country)
-            //},
-            //city() {
-            //          //    return this.country[this.countryIndex].city;
-            //        //},
-            //        city() {
-            //    if (this.country) {
-            //        return this.country[this.countryIndex].city;
-            //    }
-            //    return [];
-            //},
-            //        cityOptions() {
-            //              const city = this.city;
-            //console.log(city);
-            //                  const cities = proxyArray.map(item => item.city).flat();
-            //console.log(cities);
-            //return city.map(x=>{name:x});
-
-
         },
-        //  components: {
-        //      //selectcomponent
-        //},
         watch: {
             selectedCountry(n, o) {
                 if (n != "") {
                     this.getCity()
-                    //async getCity() {
-                    //    var _this = this;
-                    //    let fd = new FormData();
-                    //    //console.log(_this.country)
-                    //    fd.append("country", n)
-                    //    let result = await $axiosPost(this.localRouter + "?handler=GetCity", fd);
-                    //    this.city = result;
-                    //    console.log(this.city)
-                    //console.log(n)
-
-                    //console.log("aa")
-                    //}
                 }
             },
             account: function () {
@@ -275,26 +230,12 @@
                 }
             }
         },
-
-
-
         methods: {
             removeSales(index) {
                 this.salesList.splice(index, 1)
             },
-            //removeFromSales(sa) {
-            //    var index = this.sales.indexOf(sa);
-            //    if (index > -1) {
-            //        this.sales.splice(index, 1)
-            //    }
-            //},
 
             async submit() {
-                //if (this.country == "" || this.city == "" || this.account == "" || this.name == "" || this.salesList.length == 0) {
-                //    alert("請完成紅星部分")
-                //} else {
-
-                //}
                 var _this = this;
                 let fd = new FormData();
                 fd.append("account", _this.account)
@@ -304,7 +245,6 @@
                 fd.append("gender", _this.gender)
                 fd.append("remark", _this.remark)
                 let result = await $axiosPost(this.localRouter + "?handler=Submit", fd);
-                //this.city = result;
 
             },
             cancel() {
@@ -317,14 +257,11 @@
                 var _this = this;
                 let result = await $axiosPost(this.localRouter + "?handler=GetSales");
                 this.sales = result;
-                //  console.log(result);
-                //  console.log(this.sales)
             },
             async getCountry() {
                 var _this = this;
                 let result = await $axiosPost(this.localRouter + "?handler=GetCountry");
                 this.country = result;
-                // console.log(this.country)
             },
             async getCity() {
                 var _this = this;
@@ -332,18 +269,12 @@
                 fd.append("country", _this.selectedCountry)
                 let result = await $axiosPost(this.localRouter + "?handler=GetCity", fd);
                 this.city = result;
-                //console.log(this.city)
             },
 
             async test1() {
                 var _this = this;
                 let result = await $axiosPost(this.localRouter + "?handler=GetCountryCity");
                 this.city = result;
-                //console.log(this.city)
-            },
-            async getCountryAndCity() {
-                //await this.getCountry();
-                // await this.getCity();
             },
             addToSalesList() {
                 if (!this.salesList.includes(this.selectedSales)) {
@@ -351,13 +282,12 @@
                 }
                 console.log(this.selectedSales)
             },
-            //checkSales() {
-            //    console.log(this.salesList.includes(sa))
-            //},
             checkedSales() {
-                //console.log(this.selectedSales)
                 this.salesStatus = this.salesList.includes(this.selectedSales)
                 console.log(salesStatus);
+            },
+            showAlert() {
+                alert('新增成功');
             }
 
         },
