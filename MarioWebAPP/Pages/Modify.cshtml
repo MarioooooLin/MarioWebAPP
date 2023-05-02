@@ -12,38 +12,38 @@
                 <div class="row">
                     <div class="form-group col-6">
                         <label for="Account">Account</label>
-                        <input type="text"
-                               class="form-control-plaintext"
-                               id="account"
-                               aria-describedby="emailHelp"
-                               placeholder="Your email"
-                               v-model="account"
-                               readonly />
-                    </div>
+
+                        <label class="d-block font-monospace fw-bold fs-5">{{results.Account}}</label>
+</div>
                     <div class="form-group col-6">
-                        <label for="Password">Password</label>
-                        <input type="password"
+                        <label for="Name">Name</label>
+                        <input type="text"
                                class="form-control"
-                               id="password"
-                               placeholder="Password"
-                               v-model="password" />
+                               id="name"
+                               placeholder="Name"
+                               v-model="results.Name" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="form-group col-6">
-                        <label for="">Country</label>
-                        <select name="Country" id="country" v-model="country" class="d-block form-select">
-                            <option value="">-Select-</option>
-                            <option value="a">AAAAA</option>
-option>
+                        @*國家*@
+                        <label for="">Country <span class="text-danger fw-bold">*</span></label>
+
+                        <select name="Country" id="country" v-model="selectedCountry" class="d-block form-select" required>
+                            <option value="-Select-" selected disabled>-Select-</option>
+                            <option :value="cou" v-for="(cou, index) in country" :key="index">{{cou}}</option>
                         </select>
+
                     </div>
                     <div class="form-group col-6">
-                        <label for="City">City</label>
-                        <select name="City" id="city" v-model="city" class="d-block form-select">
-                            <option value="">-Select-</option>
-                            <option value="a">AAAAA</option>
+                        @*城市*@
+                        <label for="City">City <span class="text-danger fw-bold">*</span></label>
+
+                        <select name="City" id="city" v-model="selectedCity" class="d-block form-select" required>
+                            <option value="" selected disabled>-Select-</option>
+                            <option :value="cit" v-for="(cit, index) in city" :key="index">{{cit}}</option>
                         </select>
+
                     </div>
                 </div>
                 <div class="row">
@@ -55,8 +55,8 @@ option>
                                        type="radio"
                                        name="gender"
                                        id="Male"
-                                       v-model="gender"
-                                       value="male" />
+                                       v-model="results.Gender"
+                                       value=":results.Gender" />
                                 <label class="form-check-label mr-3" for="Male"> Male </label>
                             </div>
                             <div class="form-check">
@@ -164,12 +164,32 @@ option>
         data() {
             return {
                 localRouter: "",
-                results:""
+                cityList:"",
+                countryList:"",
+                results:{
+                    MemberNo:"",
+                    CreateDate:"",
+                    Name:"",
+                    Account:"",
+                    Country:"",
+                    City:"",
+                    Gender:"",
+                    Remark:"",
+                    UpdateTime:"",
+                    UpdateBy:""
+                }
 
             }
         },
         mounted() {
             this.getMember()
+        },
+        watch: {
+            Country(n, o) {
+                if (n != "") {
+                    this.getCity()
+                }
+            },
         },
         async created() {
             this.localRouter = await window.location.pathname;
@@ -182,10 +202,30 @@ option>
                 let memberNo = new URL(location.href).searchParams.get('MemberNo');
                 let fd=new FormData();
                 fd.append("memberNo",memberNo)
-                let result=$axiosPost(this.localRouter+"?handler=GetMember",fd);
-                this.results = result;
+                let result=await $axiosPost(this.localRouter+"?handler=GetMember",fd);
+                this.results.MemberNo = result[0].MemberNo;
+                this.results.CreateDate = result[0].CreateDate;
+                this.results.Name = result[0].Name;
+                this.results.Account = result[0].Account;
+                this.results.Country = result[0].Country;
+                this.results.City = result[0].City;
+                this.results.Gender = result[0].Gender;
 
-            }
+            },
+            async getCountry() {
+                var _this = this;
+                let result = await $axiosPost(this.localRouter + "?handler=GetCountry");
+                this.results.countryList = result;
+            },
+            async getCity() {
+                var _this = this;
+                let fd = new FormData();
+                fd.append("country", _this.results.Country)
+                let result = await $axiosPost(this.localRouter + "?handler=GetCity", fd);
+                this.results.cityList = result;
+            },
+
+
         },
     }).mount("#root")
 

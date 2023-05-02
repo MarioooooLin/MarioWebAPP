@@ -4,9 +4,9 @@
     ViewData["Title"] = "Search";
 }
 <div id="root">
-    <div class="container">
+    <div class="container container-fluid">
 
-        <div class="mt-3 fixed">
+        <div class="mt-3 fix ">
             <form class="px-4" method="post" onsubmit="return false">
                 <div class="Title list-inline"><h2 class="list-inline-item">Search the account</h2><h6 class="list-inline-item">(Please provide one condition at least.)</h6></div>
                 <div class="row">
@@ -84,7 +84,7 @@
             @*搜尋結果*@
             <table class="table table-info table-bordered mt-4">
                 <tr>
-                    <th>Select</th>
+                    @*<th>Select</th>*@
                     <th>Record date</th>
                     <th>Serial number</th>
                     <th>Account</th>
@@ -95,7 +95,7 @@
                     <th>Modify</th>
                 </tr>
                 <tr v-for="(item,key) in results" :key="key" >
-                    <td><input type="checkbox" name="" id="" /></td>
+                    @*<td><input type="checkbox" name="" id="" /></td>*@
                     <td>{{item.CreateDate}}</td>
                     <td>{{item.MemberNo}}</td>
                     <td>{{item.Account}}</td>
@@ -103,11 +103,11 @@
                     <td>{{item.City}}</td>
                     <td>{{item.Name}}</td>
                     <td>{{item.Gender}}</td>
-                    <td><a :href="`https://localhost:44320/Modify?MemberNo=${item.MemberNo}`">Update</a>/<a href="">Delete</a></td>
+                    <td><a :href="`https://localhost:44320/Modify?MemberNo=${item.MemberNo}`">Update</a>/<button class="btn-danger" @@click.prevent="deleteData">Delete</button></td>
                 </tr>
             </table>
             <div class="row col-2 mx-auto">
-                <button class="px-2 py-1 btn btn-primary mt-3">Batch delete</button>
+                @*<button class="px-2 py-1 btn btn-primary mt-3">Batch delete</button>*@
             </div>
         </div>
     </div>
@@ -191,6 +191,25 @@
                 console.log(result)
                 _this.results=result;
                 console.log(_this.results)}
+            },
+
+            async deleteData(){
+                
+                if (confirm("確認刪除?")){
+                    //let result = await $axiosPost(this.localRouter+"handler=Delete",fd)
+                    try{
+                        let fd = new FormData();
+                        fd.append("MemberNo", this.conditions.serialNumber);
+                        //let memberNo = this.conditions.serialNumber;
+                        let result = await $axiosPost(`${this.localRouter}handler=Delete`, fd);
+                        console.log(result);
+                        alert("刪除成功");
+                    } catch (error) {
+                        console.log(error);
+                        alert("刪除失敗");
+                    }
+                }
+                
             }
 
         },

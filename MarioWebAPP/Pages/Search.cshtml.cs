@@ -121,5 +121,18 @@ namespace MarioWebAPP.Pages
                 return new JsonResult(result);
             }
         }
+
+        public void Delete(IFormCollection formCollection)
+        {
+            var memberNo = formCollection["MemberNo"];
+            var conn = new DapperConnections.ConnectionOptions();
+            Configuration.GetSection(DapperConnections.ConnectionOptions.Position).Bind(conn);
+            var sql = @"DELETE FROM UserInfo WHERE MemberNo=@MemberNumber";
+            using (var con = new SqlConnection(conn.RookieServerContext))
+            {
+                con.Execute(sql, new { MemberNumber = memberNo });
+            }
+
+        }
     }
 }
