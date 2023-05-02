@@ -235,6 +235,9 @@
             },
 
             async submit() {
+                if (this.account == "" || this.name == "" || this.selectedCountry == "" || this.selectedCity == "") {
+                    alert("請完成紅星部分")
+                }else{
                 var _this = this;
                 let fd = new FormData();
                 fd.append("account", _this.account)
@@ -244,7 +247,7 @@
                 fd.append("gender", _this.gender)
                 fd.append("remark", _this.remark)
                 let result = await $axiosPost(this.localRouter + "?handler=Submit", fd);
-
+                }
             },
             cancel() {
                 this.interested = [];
