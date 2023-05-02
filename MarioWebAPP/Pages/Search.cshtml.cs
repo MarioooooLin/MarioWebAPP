@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Dapper;
 using System.Linq;
 using System.Collections.Generic;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 
 namespace MarioWebAPP.Pages
@@ -22,10 +23,26 @@ namespace MarioWebAPP.Pages
         {
         }
 
-        //public IActionResult OnPostSearchResult()
-        //{
+        public IActionResult OnPostSearchResult(IFormCollection formCollection)
+        {
+            var beginDate = Convert.ToDateTime(formCollection["beginDate"]);
+            var endDate = Convert.ToDateTime(formCollection["endDate"]);
+            //var result=new Dictionary<string, object>();
+            var conn = new DapperConnections.ConnectionOptions();
+            Configuration.GetSection(DapperConnections.ConnectionOptions.Position).Bind(conn);
+            var sql = @"SELECT * FROM UserInfo WHERE CreateDate BETWEEN @startDate AND @lastDate";
+            using (var con = new SqlConnection(conn.RookieServerContext))
+            {
+                var result = con.Query<string>(sql, new
+                {
+                    startDate = beginDate,
+                    lastDate = endDate
+                }).ToList();
+                return new JsonResult(result);
+            }
+        }
 
-        //}
+
         //public IActionResult OnPostGetSales()
         //{
         //    var conn = new DapperConnections.ConnectionOptions();

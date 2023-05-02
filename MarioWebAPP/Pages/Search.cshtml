@@ -75,7 +75,7 @@
                     </div>
                 </div>
                 <div class="row col-2 mx-auto">
-                    <button class="px-2 py-1 btn btn-primary mt-3">Search</button>
+                    <button class="px-2 py-1 btn btn-primary mt-3" @@click="searchData()">Search</button>
                 </div>
             </form>
         </div>
@@ -146,21 +146,6 @@
                 },
             }
         },
-        methods: {
-            async getCity() {
-                var _this = this;
-                let fd = new FormData();
-                fd.append("country", _this.conditions.selectedCountry)
-                let result = await $axiosPost(this.localRouter + "?handler=GetCity", fd);
-                this.conditions.city = result;
-            },
-            async getCountry() {
-                var _this = this;
-                let result = await $axiosPost(this.localRouter + "?handler=GetCountry");
-                this.conditions.country = result;
-            },
-
-        },
         mounted() {
             this.getCountry();
         },
@@ -170,14 +155,39 @@
             // this.getSales();
         },
         watch: {
-            selectedCountry(n, o) {
+            "conditions.selectedCountry"(n, o) {
                 if (n != "") {
                     this.getCity()
+                    console.log("aaa")
                 }
             },
+        },
 
+        methods: {
+            async getCity() {
+                var _this = this;
+                let fd = new FormData();
+                fd.append("country", this.conditions.selectedCountry)
+                let result = await $axiosPost(this.localRouter + "?handler=GetCity", fd);
+                this.conditions.city = result;
+            },
+            async getCountry() {
+                var _this = this;
+                let result = await $axiosPost(this.localRouter + "?handler=GetCountry");
+                this.conditions.country = result;
+            },
+            async searchData() {
+                var _this = this;
+                let fd = new FormData();
+                fd.append("beginDate",this.conditions.beginDate)
+                fd.append("endDate",this.conditions.endDate)
+                fd.append("serialNumber", this.conditions.serialNumber)
+                let result = await $axiosPost(this.localRouter + "?handler=SearchResult",fd)
+                console.log(result)
+                this.results=result;
+            }
 
-        }
+        },
 
     });
     vm.mount("#root");
