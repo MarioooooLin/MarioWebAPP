@@ -17,8 +17,8 @@
                                id="account"
                                aria-describedby="emailHelp"
                                placeholder="Your email"
-                               v-model="account" 
-                               readonly/>
+                               v-model="account"
+                               readonly />
                     </div>
                     <div class="form-group col-6">
                         <label for="Password">Password</label>
@@ -35,9 +35,7 @@
                         <select name="Country" id="country" v-model="country" class="d-block form-select">
                             <option value="">-Select-</option>
                             <option value="a">AAAAA</option>
-                            <option value="b">BBBBB</option>
-                            <option value="c">CCCCC</option>
-                            <option value="d">DDDDD</option>
+option>
                         </select>
                     </div>
                     <div class="form-group col-6">
@@ -45,9 +43,6 @@
                         <select name="City" id="city" v-model="city" class="d-block form-select">
                             <option value="">-Select-</option>
                             <option value="a">AAAAA</option>
-                            <option value="b">BBBBB</option>
-                            <option value="c">CCCCC</option>
-                            <option value="d">DDDDD</option>
                         </select>
                     </div>
                 </div>
@@ -163,3 +158,36 @@
         </div>
     </div>
 </div>
+
+<script>
+    const vm = Vue.createApp({
+        data() {
+            return {
+                localRouter: "",
+                results:""
+
+            }
+        },
+        mounted() {
+            this.getMember()
+        },
+        async created() {
+            this.localRouter = await window.location.pathname;
+            console.log(this.localRouter);
+            // this.getSales();
+        },
+        methods: {
+            async getMember() {
+                var _this = this;
+                let memberNo = new URL(location.href).searchParams.get('MemberNo');
+                let fd=new FormData();
+                fd.append("memberNo",memberNo)
+                let result=$axiosPost(this.localRouter+"?handler=GetMember",fd);
+                this.results = result;
+
+            }
+        },
+    }).mount("#root")
+
+
+</script>
