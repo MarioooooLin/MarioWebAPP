@@ -51,6 +51,7 @@
                     <div class="form-group col-6">
                         @*城市*@
                         <label for="City">City </label>
+
                         <select name="City" id="city" v-model="conditions.selectedCity" class="d-block form-select">
                             <option value="" selected disabled>-Select-</option>
                             <option :value="cit" v-for="(cit, index) in conditions.city" :key="index">{{cit}}</option>
