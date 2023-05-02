@@ -39,7 +39,7 @@
                         @*國家*@
                         <label for="">Country <span class="text-danger fw-bold">*</span></label>
 
-                        <select name="Country" id="country" v-model="selectedCountry" class="d-block form-select">
+                        <select name="Country" id="country" v-model="selectedCountry" class="d-block form-select" required>
                             <option value="-Select-" selected disabled>-Select-</option>
                             <option :value="cou" v-for="(cou, index) in country" :key="index">{{cou}}</option>
                         </select>
@@ -49,7 +49,7 @@
                         @*城市*@
                         <label for="City">City <span class="text-danger fw-bold">*</span></label>
 
-                        <select name="City" id="city" v-model="selectedCity" class="d-block form-select">
+                        <select name="City" id="city" v-model="selectedCity" class="d-block form-select" required>
                             <option value="" selected disabled>-Select-</option>
                             <option :value="cit" v-for="(cit, index) in city" :key="index">{{cit}}</option>
                         </select>

@@ -25,19 +25,57 @@ namespace MarioWebAPP.Pages
 
         public IActionResult OnPostSearchResult(IFormCollection formCollection)
         {
-            var beginDate = Convert.ToDateTime(formCollection["beginDate"]);
-            var endDate = Convert.ToDateTime(formCollection["endDate"]);
+            var beginDate = formCollection["beginDate"].ToString();
+            var endDate = formCollection["endDate"].ToString();
+            var serialNumber = formCollection["serialNumber"].ToString();
+            var city = formCollection["selectedCity"];
             //var result=new Dictionary<string, object>();
             var conn = new DapperConnections.ConnectionOptions();
             Configuration.GetSection(DapperConnections.ConnectionOptions.Position).Bind(conn);
-            var sql = @"SELECT * FROM UserInfo WHERE CreateDate BETWEEN @startDate AND @lastDate";
+            var sql = @"SELECT CreateDate,Name,Account,Country,City,Gender,MemberNo FROM UserInfo";
+            var parameters = new DynamicParameters();
+
+            if (!string.IsNullOrEmpty(city))
+            {
+                if (parameters.ParameterNames.Any())
+                {
+                    sql += "AND City=@city";
+                }
+                else
+                {
+                    sql += " WHERE City = @city";
+                }
+                parameters.Add("@city", city);
+            }
+            if (!string.IsNullOrEmpty(beginDate) && !string.IsNullOrEmpty(endDate))
+            {
+                if (parameters.ParameterNames.Any())
+                {
+                    sql += " AND CreateDate BETWEEN @startDate AND @endDate";
+                }
+                else
+                {
+                    sql += " WHERE CreateDate BETWEEN @startDate AND @endDate";
+                }
+                parameters.Add("@startDate", beginDate);
+                parameters.Add("@endDate", endDate);
+            }
+            if (!string.IsNullOrEmpty(serialNumber))
+            {
+                if (parameters.ParameterNames.Any())
+                {
+                    sql += " AND SerialNumber LIKE @serialNumber";
+                }
+                else
+                {
+                    sql += " WHERE SerialNumber LIKE @serialNumber";
+                }
+                parameters.Add("@serialNumber", $"%{serialNumber}%");
+            }
+
             using (var con = new SqlConnection(conn.RookieServerContext))
             {
-                var result = con.Query<string>(sql, new
-                {
-                    startDate = beginDate,
-                    lastDate = endDate
-                }).ToList();
+                var result = con.Query(sql, parameters).ToList();
                 return new JsonResult(result);
             }
         }
