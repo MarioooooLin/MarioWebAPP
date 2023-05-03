@@ -32,7 +32,8 @@ namespace MarioWebAPP.Pages
             //var result=new Dictionary<string, object>();
             var conn = new DapperConnections.ConnectionOptions();
             Configuration.GetSection(DapperConnections.ConnectionOptions.Position).Bind(conn);
-            var sql = @"SELECT CreateDate,Name,Account,Country,City,Gender,MemberNo FROM UserInfo";
+            var sql = @"SELECT CreateDate,Name,Account,Country,City,Gender,MemberNo FROM UserInfo ";
+            //@"SELECT CreateDate,Name,Account,Country,City,Gender,MemberNo FROM UserInfo where 1=1"  可不用寫下面的else部分
             var parameters = new DynamicParameters();
 
             if (!string.IsNullOrEmpty(city))
@@ -76,6 +77,8 @@ namespace MarioWebAPP.Pages
             using (var con = new SqlConnection(conn.RookieServerContext))
             {
                 var result = con.Query(sql, parameters).ToList();
+                //var result = con.Query<UserInfo>(sql, parameters).ToList();
+                //result.FirstOrDefault().
                 return new JsonResult(result);
             }
         }
@@ -122,17 +125,29 @@ namespace MarioWebAPP.Pages
             }
         }
 
-        public void Delete(IFormCollection formCollection)
+        //public void Delete(IFormCollection formCollection)
+        //{
+        //    var memberNo = formCollection["MemberNo"];
+        //    var conn = new DapperConnections.ConnectionOptions();
+        //    Configuration.GetSection(DapperConnections.ConnectionOptions.Position).Bind(conn);
+        //    var sql = @"DELETE FROM UserInfo WHERE MemberNo=@MemberNumber";
+        //    using (var con = new SqlConnection(conn.RookieServerContext))
+        //    {
+        //        con.Execute(sql, new { MemberNumber = memberNo });
+        //    }
+
+        //}
+
+        public void OnPostDelete(IFormCollection formcollection)
         {
-            var memberNo = formCollection["MemberNo"];
+            var mem = formcollection["MemberNo"].ToString();
             var conn = new DapperConnections.ConnectionOptions();
             Configuration.GetSection(DapperConnections.ConnectionOptions.Position).Bind(conn);
             var sql = @"DELETE FROM UserInfo WHERE MemberNo=@MemberNumber";
             using (var con = new SqlConnection(conn.RookieServerContext))
             {
-                con.Execute(sql, new { MemberNumber = memberNo });
+                con.Execute(sql, new { MemberNumber = mem });
             }
-
         }
     }
 }

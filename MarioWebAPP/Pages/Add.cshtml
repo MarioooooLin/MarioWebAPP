@@ -166,8 +166,8 @@
 
                 <div class="form-group form-check"></div>
                 <button type="submit" class="btn btn-primary mx-3" @@click="submit">Submit</button>
-                <button type="reset" class="btn btn-primary mx-3" @@click="cancel()">Cancel</button>
-            </form>
+@*                <button type="reset" class="btn btn-primary mx-3" @@click="cancel()">Cancel</button>
+*@            </form>
         </div>
     </div>
 </div>
@@ -237,16 +237,23 @@
             async submit() {
                 if (this.account == "" || this.name == "" || this.selectedCountry == "" || this.selectedCity == "") {
                     alert("請完成紅星部分")
-                }else{
-                var _this = this;
-                let fd = new FormData();
-                fd.append("account", _this.account)
-                fd.append("name", _this.name)
-                fd.append("country", _this.selectedCountry)
-                fd.append("city", _this.selectedCity)
-                fd.append("gender", _this.gender)
-                fd.append("remark", _this.remark)
-                let result = await $axiosPost(this.localRouter + "?handler=Submit", fd);
+                } else {
+                    try {
+                        var _this = this;
+                        let fd = new FormData();
+                        fd.append("account", _this.account)
+                        fd.append("name", _this.name)
+                        fd.append("country", _this.selectedCountry)
+                        fd.append("city", _this.selectedCity)
+                        fd.append("gender", _this.gender)
+                        fd.append("remark", _this.remark)
+                        let result = await $axiosPost(this.localRouter + "?handler=Submit", fd);
+                        console.log(result);
+                        location.reload()
+                    }
+                    catch (error) {
+                        alert("新增失敗")
+                    }
                 }
             },
             cancel() {

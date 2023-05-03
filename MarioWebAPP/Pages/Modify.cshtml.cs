@@ -33,7 +33,7 @@ namespace MarioWebAPP.Pages
             {
                 var result = con.Query(sql, new
                 {
-                    membernumber=memberNo
+                    membernumber = memberNo
                 }).ToList();
                 return new JsonResult(result);
             }
@@ -67,6 +67,34 @@ namespace MarioWebAPP.Pages
                 }).ToList();
                 return new JsonResult(result);
             }
+        }
+
+        public IActionResult OnPostUpdate(IFormCollection formCollection)
+        {
+            var country = formCollection["Country"];
+            var city = formCollection["City"];
+            var gender = formCollection["Gender"];
+            var name = formCollection["Name"];
+
+            var conn = new DapperConnections.ConnectionOptions();
+            Configuration.GetSection(DapperConnections.ConnectionOptions.Position).Bind(conn);
+            var sql = @"update UserInfo set Name=@Name,
+                        Country=@Country,
+                        City=@City,
+                        Gender=@Gender,                                              
+                        where Account = @Account";
+            using (var con = new SqlConnection(conn.RookieServerContext))
+            {
+
+                var result = con.Execute(sql, new
+                {
+                    Name = name,
+                    Country = country,
+                    City = city,
+                    Gender = gender
+                });
+            }
+            return new JsonResult(sql);
         }
 
     }

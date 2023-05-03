@@ -71,7 +71,7 @@
                     <div class="form-group col-6">
                         @*帳號*@
                         <label for="account">Account</label>
-                        <input type="password" class="form-control" id="serialNumber" placeholder="Account" v-model="conditions.account" />
+                        <input type="text" class="form-control" id="serialNumber" placeholder="Account" v-model="conditions.account" />
                     </div>
                 </div>
                 <div class="row col-2 mx-auto">
@@ -94,7 +94,7 @@
                     <th>Gender</th>
                     <th>Modify</th>
                 </tr>
-                <tr v-for="(item,key) in results" :key="key" >
+                <tr v-for="(item,key) in results" :key="key">
                     @*<td><input type="checkbox" name="" id="" /></td>*@
                     <td>{{item.CreateDate}}</td>
                     <td>{{item.MemberNo}}</td>
@@ -103,7 +103,7 @@
                     <td>{{item.City}}</td>
                     <td>{{item.Name}}</td>
                     <td>{{item.Gender}}</td>
-                    <td><a :href="`https://localhost:44320/Modify?MemberNo=${item.MemberNo}`">Update</a>/<button class="btn-danger" @@click.prevent="deleteData">Delete</button></td>
+                    <td><a :href="`https://localhost:44320/Modify?MemberNo=${item.MemberNo}`">Update</a>/<button class="btn-danger" @@click="deleteData(item.MemberNo)">Delete</button></td>
                 </tr>
             </table>
             <div class="row col-2 mx-auto">
@@ -135,15 +135,15 @@
                     countryIndex: 2,
                     cityIndex: 0,
                 },
-                results: {
-                    recordDate: [],
-                    memberNoList: [],
-                    accountList: [],
-                    countryList: [],
-                    cityList: [],
-                    nameList: [],
-                    genderList: [],
-                },
+                results: [
+                    //recordDate: [],
+                    //memberNoList: [],
+                    //accountList: [],
+                    //countryList: [],
+                    //cityList: [],
+                    //nameList: [],
+                    //genderList: [],
+                ],
             }
         },
         mounted() {
@@ -180,41 +180,60 @@
 
                 if (this.conditions.beginDate == "" && this.conditions.endDate == "" && this.conditions.serialNumber == "" && this.conditions.selectedCity == "") {
                     alert("請輸入至少一項條件")
-                }else{
-                var _this = this;
-                let fd = new FormData();
-                fd.append("beginDate",this.conditions.beginDate)
-                fd.append("endDate",this.conditions.endDate)
-                fd.append("serialNumber", this.conditions.serialNumber)
-                fd.append("selectedCity", this.conditions.selectedCity)
-                let result = await $axiosPost(this.localRouter + "?handler=SearchResult",fd)
-                console.log(result)
-                _this.results=result;
-                console.log(_this.results)}
+                } else {
+                    var _this = this;
+                    let fd = new FormData();
+                    fd.append("beginDate", this.conditions.beginDate)
+                    fd.append("endDate", this.conditions.endDate)
+                    fd.append("serialNumber", this.conditions.serialNumber)
+                    fd.append("selectedCity", this.conditions.selectedCity)
+                    let result = await $axiosPost(this.localRouter + "?handler=SearchResult", fd)
+                    console.log(result)
+                    _this.results = result;
+                    console.log(_this.results)
+                }
             },
 
-            async deleteData(){
-                
-                if (confirm("確認刪除?")){
-                    //let result = await $axiosPost(this.localRouter+"handler=Delete",fd)
-                    try{
+            async deleteData(MemberNo) {
+                let mem = MemberNo;
+                if (confirm("確認刪除?")) {
+                    try {
+
                         let fd = new FormData();
-                        fd.append("MemberNo", this.conditions.serialNumber);
-                        //let memberNo = this.conditions.serialNumber;
-                        let result = await $axiosPost(`${this.localRouter}handler=Delete`, fd);
-                        console.log(result);
-                        alert("刪除成功");
-                    } catch (error) {
-                        console.log(error);
-                        alert("刪除失敗");
+                        fd.append("MemberNo", mem)
+                        //let result=await $axiosPost(this.localRouter+"?handler=Delete",fd)
+                        let result = await $axiosPost(this.localRouter + '?handler=Delete', fd);
+                        console.log(result)
+                        alert("刪除成功")
+                        location.reload();
+                    }
+                    catch (error) {
+                        alert("刪除失敗")
                     }
                 }
-                
+                //let result = await $axiosPost(`${this.localRouter}?handler=Delete`, { MemberNo: MemberNo })
+                //console.log(result)
+                //.then(res=>{
+                //    if(res.status<300){
+                //        alert("成功")
+                //    }
+
+                //let result = await $axiosPost(this.localRouter+"handler=Delete",fd)
+                //try{
+                //    let fd = new FormData();
+                //    fd.append("MemberNo", this.conditions.serialNumber);
+                //    //let memberNo = this.conditions.serialNumber;
+                //    let result = await $axiosPost(`${this.localRouter}handler=Delete`, fd);
+                //    console.log(result);
+                //    alert("刪除成功");
+                //} catch (error) {
+                //    console.log(error);
+                //    alert("刪除失敗");
+                //}
             }
-
-        },
-
-    });
+        }
+    },
+    );
     vm.mount("#root");
 
 
