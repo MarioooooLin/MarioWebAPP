@@ -4,7 +4,7 @@
     ViewData["Title"] = "Add";
 }
 <div id="root">
-    <div class="container">
+    <div class="container mb-5">
 
         <div class="mt-3 fixed">
             <form class="px-4">
@@ -84,7 +84,7 @@
                     <div class="form-group col-6">
                         <label for="Sales">Sales <span class="text-danger fw-bold">*</span></label>
                         @*業務*@
-                        <select name="Sales" id="sales" class="d-block form-select" v-model="selectedSales" @@change="addToSalesList">
+                        <select name="Sales" id="sales" class="d-block form-select" v-model="selectedSales" @@change="addToSalesList" required>
                             <option value="" selected disabled>-Select-</option>
                             <option :value="sa" v-for="(sa, index) in sales" :key="index">{{sa}}</option>
                         </select>
@@ -166,8 +166,9 @@
 
                 <div class="form-group form-check"></div>
                 <button type="submit" class="btn btn-primary mx-3" @@click="submit">Submit</button>
-@*                <button type="reset" class="btn btn-primary mx-3" @@click="cancel()">Cancel</button>
-*@            </form>
+                @*                <button type="reset" class="btn btn-primary mx-3" @@click="cancel()">Cancel</button>
+                *@
+            </form>
         </div>
     </div>
 </div>
@@ -235,20 +236,24 @@
             },
 
             async submit() {
-                if (this.account == "" || this.name == "" || this.selectedCountry == "" || this.selectedCity == "") {
+                if (this.account == "" || this.name == "" || this.selectedCountry == "" || this.selectedCity == "" || this.salesList == []) {
                     alert("請完成紅星部分")
                 } else {
                     try {
                         var _this = this;
                         let fd = new FormData();
+                        let salesFD = new FormData();
                         fd.append("account", _this.account)
                         fd.append("name", _this.name)
                         fd.append("country", _this.selectedCountry)
                         fd.append("city", _this.selectedCity)
                         fd.append("gender", _this.gender)
                         fd.append("remark", _this.remark)
+                        fd.append("salesList",JSON.stringify(_this.salesList))
+                        fd.append("interested",JSON.stringify(_this.interested))
                         let result = await $axiosPost(this.localRouter + "?handler=Submit", fd);
                         console.log(result);
+                        alert(result)
                         location.reload()
                     }
                     catch (error) {
@@ -277,11 +282,6 @@
                 this.city = result;
             },
 
-            //async test1() {
-            //    var _this = this;
-            //    let result = await $axiosPost(this.localRouter + "?handler=GetCountryCity");
-            //    this.city = result;
-            //},
             addToSalesList() {
                 if (!this.salesList.includes(this.selectedSales)) {
                     this.salesList.push(this.selectedSales);

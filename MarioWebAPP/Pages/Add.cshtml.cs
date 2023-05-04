@@ -6,8 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Dapper;
 using System.Linq;
 using System.Collections.Generic;
-
-
+using System.Text.Json;
 
 namespace MarioWebAPP.Pages
 {
@@ -75,74 +74,65 @@ namespace MarioWebAPP.Pages
         }
 
 
-        //public IActionResult OnPostGetCountryCity()
-        //{
-        //    List<string> City = new List<string>();
-        //    var results = new Dictionary<string, List<string>>();
-
-        //    try
-        //    {
-        //        var conn = new DapperConnections.ConnectionOptions();
-        //        Configuration.GetSection(DapperConnections.ConnectionOptions.Position).Bind(conn);
-        //        var sql = "SELECT Country, City FROM CountryInfo";
-
-        //        using (var con = new SqlConnection(conn.RookieServerContext))
-        //        {
-        //            var countryCityResult = con.Query(sql).ToList();
-        //            var result = new List<object>();
-
-        //            foreach (var item in countryCityResult.GroupBy(x => x.Country))
-        //            {
-        //                var country = item.Key;
-        //                var cities = item.Select(x => x.City).ToList();
-        //                var obj = new { name = country, city = cities };
-        //                result.Add(obj);
-        //            }
-
-        //            return new JsonResult(result);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-
-        //    }
-        //    return new JsonResult(null);
-        //}
-
-        //public IActionResult OnPostTest()
-        //{
-        //    var conn = new DapperConnections.ConnectionOptions();
-        //    Configuration.GetSection(DapperConnections.ConnectionOptions.Position).Bind(conn);
-
-        //    var sql = "select Country from CountryInfo group by Country having count(*) > 1 ";
-        //    using (var con = new SqlConnection(conn.RookieServerContext))
-        //    {
-        //        var countryResult = con.Query<string>(sql).ToList();
-        //    }
-
-
-        //}
-
         public async Task<IActionResult> OnPostSubmit(IFormCollection memberCollection)
         {
-
             //NEW
             var conn = new DapperConnections.ConnectionOptions();
             Configuration.GetSection(DapperConnections.ConnectionOptions.Position).Bind(conn);
-            var sql =
-                @"insert into UserInfo 
+            var sql = @"insert into UserInfo 
                 (MemberNo,CreateDate,Name,Account,Country,City,Gender,Remark,UpdateTime,UpdateBy) 
                 values 
                 (@MemberNo,@CreateDate,@Name,@Account,@Country,@City,@Gender,@Remark,@UpdateTime,@UpdateBy)";
+            var sql2 =
+                @"insert into UserInfoMappingSales 
+                (MemberNo,Sales,UpdateTime,UpdateBy) 
+                values 
+                (@MemberNo,@Sales,@UpdateTime,@UpdateBy)";
+            var sql3 =
+                @"insert into UserInfoMappingInterest
+                (MemberNo,UpdateTime,UpdateBy,InterestItem) 
+                values 
+                (@MemberNo,@UpdateTime,@UpdateBy,@InterestItem)";
+            var success = "";
+
             using (var con = new SqlConnection(conn.RookieServerContext))
             {
                 var curDate = DateTime.Now.ToString("yyyyMMdd");
                 var createDate = DateTime.Now;
                 var updateTime = DateTime.Now;
                 var maxID = await con.ExecuteScalarAsync<int?>("select max(cast(substring(MemberNo,12,3) as int)) from UserInfo where MemberNo like @Prefix", new { Prefix = $"Mem{curDate}%" }) ?? 0;
-
                 var newSequence = (maxID + 1).ToString().PadLeft(3, '0');
                 var newId = $"Mem{curDate}{newSequence}";
+                //var Name = memberCollection["Name"].ToString();
+                var SalesList = new List<string>();
+                var InterestedList = new List<string>();
+                SalesList = JsonSerializer.Deserialize<List<string>>(memberCollection["salesList"]);
+                InterestedList = JsonSerializer.Deserialize<List<string>>(memberCollection["interested"]);
+
+                var sales = new List<SalesList>();
+                for (int i = 0; i < SalesList.Count; i++)
+                {
+                    sales.Add(new SalesList()
+                    {
+                        MemberNo = newId,
+                        UpdateBy = "System",
+                        UpdateTime = createDate,
+                        Sales = SalesList[i]
+                    });
+                }
+
+                var interest = new List<Interest>();
+                for (int i = 0; i < InterestedList.Count; i++)
+                {
+                    interest.Add(new Interest()
+                    {
+                        MemberNo = newId,
+                        UpdateBy = "System",
+                        UpdateTime = createDate,
+                        InterestItem = InterestedList[i]
+                    });
+                }
+
                 var rowsAffected = await con.ExecuteAsync(sql, new
                 {
                     MemberNo = newId,
@@ -158,7 +148,9 @@ namespace MarioWebAPP.Pages
                 });
                 if (rowsAffected == 1)
                 {
-                    return new OkResult();
+                    var result = await con.ExecuteAsync(sql2, sales);
+                    var result1 = await con.ExecuteAsync(sql3, interest);
+                    
                 }
                 else
                 {
@@ -166,11 +158,12 @@ namespace MarioWebAPP.Pages
                 }
             }
 
+            return new JsonResult(success);
         }
 
 
 
 
-        }
     }
+}
 
