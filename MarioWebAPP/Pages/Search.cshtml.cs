@@ -52,11 +52,11 @@ namespace MarioWebAPP.Pages
             {
                 if (parameters.ParameterNames.Any())
                 {
-                    sql += " AND CreateDate BETWEEN @startDate AND @endDate";
+                    sql += " AND CreateDate >= @startDate AND CreateDate <= @endDate";
                 }
                 else
                 {
-                    sql += " WHERE CreateDate BETWEEN @startDate AND @endDate";
+                    sql += " WHERE CreateDate >= @startDate AND CreateDate <= @endDate";
                 }
                 parameters.Add("@startDate", beginDate);
                 parameters.Add("@endDate", endDate);
@@ -76,9 +76,23 @@ namespace MarioWebAPP.Pages
 
             using (var con = new SqlConnection(conn.RookieServerContext))
             {
+                //try {
+                //    var result = con.Query(sql, parameters).ToList();
+                //    return new JsonResult(result);
+                //}
+                //catch (Exception ex) {
+
+                //    return new JsonResult(ex);
+                //}
+
+
                 var result = con.Query(sql, parameters).ToList();
-                //var result = con.Query<UserInfo>(sql, parameters).ToList();
-                //result.FirstOrDefault().
+
+                //if(result.Count=0)
+                //{
+                //    return new JsonResult(result);
+                //}
+
                 return new JsonResult(result);
             }
         }
