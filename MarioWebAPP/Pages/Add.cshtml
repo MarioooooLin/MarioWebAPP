@@ -67,7 +67,7 @@
                                        name="gender"
                                        id="Male"
                                        v-model="gender"
-                                       value="male" />
+                                       value="Male" />
                                 <label class="form-check-label mr-3" for="Male"> Male </label>
                             </div>
                             <div class="form-check">
@@ -76,7 +76,7 @@
                                        name="gender"
                                        id="Female"
                                        v-model="gender"
-                                       value="female" />
+                                       value="Female" />
                                 <label class="form-check-label" for="Female"> Female </label>
                             </div>
                         </div>
@@ -90,11 +90,11 @@
                         </select>
 
                         <ul class="d-inline-flex w-auto">
-                            <li class="w-auto h-25 border border-dark mt-1 d-inline mr-2 font-weight-bold"
+                            <li class="w-auto h-25 mt-1 d-inline mr-3 font-weight-bold"
                                 v-for="(sesa,index) in salesList"
                                 :key="sesa">
                                 {{sesa}}
-                                <button @@click="removeSales(index)" class="btn btn-primary btn-sm">Remove</button>
+                                <button @@click="removeSales(index)" class="btn btn-outline-danger btn-sm">X</button>
                             </li>
                         </ul>
                     </div>

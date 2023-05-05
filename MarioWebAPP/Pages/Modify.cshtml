@@ -6,7 +6,7 @@
 <div id="root">
     <div class="container">
 
-        <div class="mt-3 fixed">
+        <div class="mt-3 fixed mb-5">
             <form class="px-4">
                 <div class="Title"><h2>Modify the account</h2></div>
                 <div class="row">
@@ -14,7 +14,7 @@
                         <label for="Account">Account</label>
 
                         <label class="d-block font-monospace fw-bold fs-5">{{results.Account}}</label>
-</div>
+                    </div>
                     <div class="form-group col-6">
                         <label for="Name">Name</label>
                         <input type="text"
@@ -29,9 +29,9 @@
                         @*國家*@
                         <label for="">Country <span class="text-danger fw-bold">*</span></label>
 
-                        <select name="Country" id="country" v-model="selectedCountry" class="d-block form-select" required>
+                        <select name="Country" id="country" v-model="results.Country" class="d-block form-select" >
                             <option value="-Select-" selected disabled>-Select-</option>
-                            <option :value="cou" v-for="(cou, index) in country" :key="index">{{cou}}</option>
+                            <option :value="cou" v-for="(cou, index) in countryList" :key="index">{{cou}}</option>
                         </select>
 
                     </div>
@@ -39,9 +39,9 @@
                         @*城市*@
                         <label for="City">City <span class="text-danger fw-bold">*</span></label>
 
-                        <select name="City" id="city" v-model="selectedCity" class="d-block form-select" required>
+                        <select name="City" id="city" v-model="results.City" class="d-block form-select" >
                             <option value="" selected disabled>-Select-</option>
-                            <option :value="cit" v-for="(cit, index) in city" :key="index">{{cit}}</option>
+                            <option :value="cit" v-for="(cit, index) in cityList" :key="index">{{cit}}</option>
                         </select>
 
                     </div>
@@ -50,13 +50,14 @@
                     <div class="form-group col-6">
                         <label for="">Gender</label>
                         <div class="d-flex">
+                            @*性別*@
                             <div class="form-check">
                                 <input class="form-check-input"
                                        type="radio"
                                        name="gender"
                                        id="Male"
                                        v-model="results.Gender"
-                                       value=":results.Gender" />
+                                       value="Male" />
                                 <label class="form-check-label mr-3" for="Male"> Male </label>
                             </div>
                             <div class="form-check">
@@ -64,8 +65,8 @@
                                        type="radio"
                                        name="gender"
                                        id="Female"
-                                       v-model="gender"
-                                       value="female" />
+                                       v-model="results.Gender"
+                                       value="Female" />
                                 <label class="form-check-label" for="Female"> Female </label>
                             </div>
                         </div>
@@ -73,79 +74,82 @@
                     <div class="form-group col-6">
                         <!-- v-if處理 -->
                         <label for="Sales">Sales</label>
-
-                        <select name="Sales" id="sales" class="d-block form-select">
-                            <option :value="Select" selected disabled>-Select-</option>
-                            <option :value="sales" v-for="(sa, index) in sales" :key="index">{{sa}}</option>
+                        @*業務*@
+                        <select name="Sales" id="sales" class="d-block form-select" v-model="selectedSales" @@change="addToSales">
+                            <option :value="" selected disabled>-Select-</option>
+                            <option :value="sa" v-for="(sa, index) in salesList" :key="index">{{sa}}</option>
                         </select>
 
                         <div class="d-inline-flex w-auto">
-                            <div class="w-auto h-25 border border-dark mt-1 d-inline mr-2 font-weight-bold"
-                                 v-for="(sa,index) in sales"
+                            <div class="w-auto h-25  mt-1 d-inline mr-3 font-weight-bold"
+                                 v-for="(sa,index) in results.Sales"
                                  :key="index">
                                 {{sa}}
-                                <button :click="removeSales()" class="btn btn-primary btn-sm">Remove</button>
+                                <button @@click.prevent="removeSales(index)" class="btn btn-outline-danger btn-sm ">X</button>
+                                
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="form-group border-primary">
                     <p>Your interested products:</p>
+                    @*興趣產品*@
                     <div class="border h-auto p-2">
                         <span class="ml-3">
                             <input type="checkbox"
                                    name="PRIME Series"
                                    id="1"
                                    value="PRIME Series"
-                                   v-model="interested" /><label for="1" class="pl-1">PRIME Series</label>
+                                   v-model="results.Interest" /><label for="1" class="pl-1">PRIME Series</label>
                         </span>
                         <span class="ml-3">
                             <input type="checkbox"
                                    name="VERTEX Series"
                                    id="2"
                                    value="VERTEX Series"
-                                   v-model="interested" /><label for="2" class="pl-1">VERTEX Series</label>
+                                   v-model="results.Interest" /><label for="2" class="pl-1">VERTEX Series</label>
                         </span>
                         <span class="ml-3">
                             <input type="checkbox"
                                    name="FOCUS Series"
                                    id="3"
                                    value="FOCUS Series"
-                                   v-model="interested" /><label for="3" class="pl-1">FOCUS Series</label>
+                                   v-model="results.Interest" /><label for="3" class="pl-1">FOCUS Series</label>
                         </span>
                         <span class="ml-3">
                             <input type="checkbox"
                                    name="CORE Series"
                                    id="4"
                                    value="CORE Series"
-                                   v-model="interested" /><label for="4" class="pl-1">CORE Series</label>
+                                   v-model="results.Interest" /><label for="4" class="pl-1">CORE Series</label>
                         </span>
                         <span class="ml-3">
                             <input type="checkbox"
                                    name="S12III Series"
                                    id="5"
                                    value="S12III Series"
-                                   v-model="interested" /><label for="5" class="pl-1">S12III Series</label>
+                                   v-model="results.Interest" /><label for="5" class="pl-1">S12III Series</label>
                         </span>
                         <span class="ml-3">
                             <input type="checkbox"
                                    name="INDUSTRIAL"
                                    id="6"
                                    value="INDUSTRIAL"
-                                   v-model="interested" /><label for="6" class="pl-1">INDUSTRIAL</label>
+                                   v-model="results.Interest" /><label for="6" class="pl-1">INDUSTRIAL</label>
                         </span>
                         <span class="ml-3">
                             <input type="checkbox"
                                    name="Other"
                                    id="7"
                                    value="Other"
-                                   v-model="interested" /><label for="7" class="pl-1">Other</label>
+                                   v-model="results.Interest" /><label for="7" class="pl-1">Other</label>
                         </span>
                     </div>
                 </div>
                 <div class="form-group">
+                    @*備註*@
                     <p>Remark:</p>
-                    <textarea name="remark" id="remark" cols="70" rows="5" class="form-control"></textarea>
+                    <textarea name="remark" id="remark" cols="70" rows="5" class="form-control" v-model="results.Remark"></textarea>
                 </div>
 
                 <div class="form-group form-check">
@@ -163,30 +167,37 @@
     const vm = Vue.createApp({
         data() {
             return {
+                selectedSales:"",
                 localRouter: "",
-                cityList:"",
-                countryList:"",
-                results:{
-                    MemberNo:"",
-                    CreateDate:"",
-                    Name:"",
-                    Account:"",
-                    Country:"",
-                    City:"",
-                    Gender:"",
-                    Remark:"",
-                    UpdateTime:"",
-                    UpdateBy:"",
-                    Interested:[]
+                cityList: "",
+                countryList: "",
+                salesList:"",
+                results: {
+                    MemberNo: "",
+                    CreateDate: "",
+                    Name: "",
+                    Account: "",
+                    Country: "",
+                    City: "",
+                    Gender: "",
+                    Remark: "",
+                    UpdateTime: "",
+                    UpdateBy: "",
+                    Sales: [],
+                    Interest: [],
+                    Remark:""
                 }
 
             }
         },
         mounted() {
             this.getMember()
+            this.getMemberSales()
+            this.getCountry()
+            this.getMemberInterest()
         },
         watch: {
-            Country(n, o) {
+            'results.Country'(n, o) {
                 if (n != "") {
                     this.getCity()
                 }
@@ -195,15 +206,18 @@
         async created() {
             this.localRouter = await window.location.pathname;
             console.log(this.localRouter);
-            // this.getSales();
+             this.getSales();
         },
         methods: {
+            removeSales(index) {
+                this.salesList.splice(index, 1)
+            },
             async getMember() {
                 var _this = this;
                 let memberNo = new URL(location.href).searchParams.get('MemberNo');
-                let fd=new FormData();
-                fd.append("memberNo",memberNo)
-                let result=await $axiosPost(this.localRouter+"?handler=GetMember",fd);
+                let fd = new FormData();
+                fd.append("memberNo", memberNo)
+                let result = await $axiosPost(this.localRouter + "?handler=GetMember", fd);
                 this.results.MemberNo = result[0].MemberNo;
                 this.results.CreateDate = result[0].CreateDate;
                 this.results.Name = result[0].Name;
@@ -211,21 +225,62 @@
                 this.results.Country = result[0].Country;
                 this.results.City = result[0].City;
                 this.results.Gender = result[0].Gender;
+                this.results.Remark=result[0].Remark;
+            },
+            async getMemberSales() {
+                var _this = this;
+                let memberNo = new URL(location.href).searchParams.get('MemberNo');
+                let fd = new FormData();
+                fd.append("memberNo", memberNo)
+                let result = await $axiosPost(this.localRouter + "?handler=GetMemberSales", fd);
+                console.log(result)
+                this.results.Sales = result;
 
             },
+            async getMemberInterest() {
+                var _this = this;
+                let memberNo = new URL(location.href).searchParams.get('MemberNo');
+                let fd = new FormData();
+                fd.append("memberNo", memberNo)
+                let result = await $axiosPost(this.localRouter + "?handler=GetMemberInterest", fd);
+                console.log(result)
+                this.results.Interest = result;
+
+            },
+
+
             async getCountry() {
                 var _this = this;
                 let result = await $axiosPost(this.localRouter + "?handler=GetCountry");
-                this.results.countryList = result;
+                this.countryList = result;
             },
             async getCity() {
                 var _this = this;
                 let fd = new FormData();
                 fd.append("country", _this.results.Country)
                 let result = await $axiosPost(this.localRouter + "?handler=GetCity", fd);
-                this.results.cityList = result;
+                this.cityList = result;
             },
+            async getSales() {
+                var _this = this;
+                let result = await $axiosPost(this.localRouter + "?handler=GetSales");
+                this.salesList = result;
+            },
+            addToSales() {
+                if (!this.results.Sales.includes(this.selectedSales)) {
+                    this.results.Sales.push(this.selectedSales);
+                }
+                console.log(this.selectedSales)
+            },
+            removeSales(index) {
+                this.results.Sales.splice(index, 1)
+            },
+            async submit(){
+                var _this=this;
+                let fd=new FormData();
+                fd.append("")
 
+            }
 
         },
     }).mount("#root")

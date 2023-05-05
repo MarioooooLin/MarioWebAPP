@@ -29,12 +29,42 @@ namespace MarioWebAPP.Pages
             var endDate = formCollection["endDate"].ToString();
             var serialNumber = formCollection["serialNumber"].ToString();
             var city = formCollection["selectedCity"];
+            var sales = formCollection["sales"];
+            var account = formCollection["account"];
             //var result=new Dictionary<string, object>();
             var conn = new DapperConnections.ConnectionOptions();
             Configuration.GetSection(DapperConnections.ConnectionOptions.Position).Bind(conn);
-            var sql = @"SELECT CreateDate,Name,Account,Country,City,Gender,MemberNo FROM UserInfo ";
+            var sql = @"SELECT a.CreateDate,a.Name,a.Account,a.Country,a.City,a.Gender,a.MemberNo FROM UserInfo as a ";
+            //var sql2 = @"select ";
             //@"SELECT CreateDate,Name,Account,Country,City,Gender,MemberNo FROM UserInfo where 1=1"  ぃノ糶else场だ
             var parameters = new DynamicParameters();
+
+            if (!string.IsNullOrEmpty(sales))
+            {
+                if (parameters.ParameterNames.Any())
+                {
+                    sql += "left join UserInfoMappingSales as b on a.MemberNo=b.MemberNo where Sales =@sales";
+                }
+                else{
+                    sql += "left join UserInfoMappingSales as b on a.MemberNo=b.MemberNo where Sales =@sales";
+
+                }
+                parameters.Add("@sales", sales);
+
+            }
+            if (!string.IsNullOrEmpty(account))
+            {
+                if (parameters.ParameterNames.Any())
+                {
+                    sql += "AND Account=@account";
+                }
+                else //硂场だ
+                {
+                    sql += " WHERE Account = @account";
+                }
+                parameters.Add("@account", account);
+            }
+
 
             if (!string.IsNullOrEmpty(city))
             {
@@ -42,7 +72,7 @@ namespace MarioWebAPP.Pages
                 {
                     sql += "AND City=@city";
                 }
-                else
+                else //硂场だ
                 {
                     sql += " WHERE City = @city";
                 }
@@ -54,7 +84,7 @@ namespace MarioWebAPP.Pages
                 {
                     sql += " AND CreateDate >= @startDate AND CreateDate <= @endDate";
                 }
-                else
+                else  //硂场だ
                 {
                     sql += " WHERE CreateDate >= @startDate AND CreateDate <= @endDate";
                 }
@@ -65,14 +95,15 @@ namespace MarioWebAPP.Pages
             {
                 if (parameters.ParameterNames.Any())
                 {
-                    sql += " AND SerialNumber LIKE @serialNumber";
+                    sql += " AND MemberNo LIKE @serialNumber";
                 }
-                else
+                else //硂场だ
                 {
-                    sql += " WHERE SerialNumber LIKE @serialNumber";
+                    sql += " WHERE MemberNo LIKE @serialNumber";
                 }
                 parameters.Add("@serialNumber", $"%{serialNumber}%");
             }
+
 
             using (var con = new SqlConnection(conn.RookieServerContext))
             {
@@ -163,5 +194,18 @@ namespace MarioWebAPP.Pages
                 con.Execute(sql, new { MemberNumber = mem });
             }
         }
+
+        public IActionResult OnPostGetSales()
+        {
+            var conn = new DapperConnections.ConnectionOptions();
+            Configuration.GetSection(DapperConnections.ConnectionOptions.Position).Bind(conn);
+            var sql = "select Sales from SalesData";
+            using (var con = new SqlConnection(conn.RookieServerContext))
+            {
+                var result = con.Query<string>(sql).ToList();
+                return new JsonResult(result);
+            }
+        }
+
     }
 }

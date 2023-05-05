@@ -39,6 +39,38 @@ namespace MarioWebAPP.Pages
             }
 
         }
+
+        public IActionResult OnPostGetMemberSales(IFormCollection formcollection)
+        {
+            var memberNo = formcollection["memberNo"].ToString();
+
+            var conn = new DapperConnections.ConnectionOptions();
+            Configuration.GetSection(DapperConnections.ConnectionOptions.Position).Bind(conn);
+            var sql = @"select Sales from UserInfoMappingSales where MemberNo =  @membernumber";
+            using (var con = new SqlConnection(conn.RookieServerContext))
+            {
+                var result = con.Query<string>(sql, new
+                {
+                    membernumber = memberNo
+                }).ToList();
+                return new JsonResult(result);
+            }
+
+        }
+
+        public IActionResult OnPostGetSales()
+        {
+            var conn = new DapperConnections.ConnectionOptions();
+            Configuration.GetSection(DapperConnections.ConnectionOptions.Position).Bind(conn);
+            var sql = "select Sales from SalesData";
+            using (var con = new SqlConnection(conn.RookieServerContext))
+            {
+                var result = con.Query<string>(sql).ToList();
+                return new JsonResult(result);
+            }
+        }
+
+
         public IActionResult OnPostGetCountry()
         {
             var conn = new DapperConnections.ConnectionOptions();
@@ -96,6 +128,25 @@ namespace MarioWebAPP.Pages
             }
             return new JsonResult(sql);
         }
+
+        public IActionResult OnPostGetMemberInterest(IFormCollection formcollection)
+        {
+            var memberNo = formcollection["memberNo"].ToString();
+
+            var conn = new DapperConnections.ConnectionOptions();
+            Configuration.GetSection(DapperConnections.ConnectionOptions.Position).Bind(conn);
+            var sql = @"select InterestItem from [UserInfoMappingInterest] where MemberNo =  @membernumber";
+            using (var con = new SqlConnection(conn.RookieServerContext))
+            {
+                var result = con.Query<string>(sql, new
+                {
+                    membernumber = memberNo
+                }).ToList();
+                return new JsonResult(result);
+            }
+
+        }
+
 
     }
 }
