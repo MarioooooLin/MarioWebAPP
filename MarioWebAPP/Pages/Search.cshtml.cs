@@ -107,22 +107,8 @@ namespace MarioWebAPP.Pages
 
             using (var con = new SqlConnection(conn.RookieServerContext))
             {
-                //try {
-                //    var result = con.Query(sql, parameters).ToList();
-                //    return new JsonResult(result);
-                //}
-                //catch (Exception ex) {
-
-                //    return new JsonResult(ex);
-                //}
-
 
                 var result = con.Query(sql, parameters).ToList();
-
-                //if(result.Count=0)
-                //{
-                //    return new JsonResult(result);
-                //}
 
                 return new JsonResult(result);
             }
@@ -156,19 +142,6 @@ namespace MarioWebAPP.Pages
                 return new JsonResult(result);
             }
         }
-
-        //public void Delete(IFormCollection formCollection)
-        //{
-        //    var memberNo = formCollection["MemberNo"];
-        //    var conn = new DapperConnections.ConnectionOptions();
-        //    Configuration.GetSection(DapperConnections.ConnectionOptions.Position).Bind(conn);
-        //    var sql = @"DELETE FROM UserInfo WHERE MemberNo=@MemberNumber";
-        //    using (var con = new SqlConnection(conn.RookieServerContext))
-        //    {
-        //        con.Execute(sql, new { MemberNumber = memberNo });
-        //    }
-
-        //}
 
         public void OnPostDelete(IFormCollection formcollection)
         {

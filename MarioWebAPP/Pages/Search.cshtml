@@ -138,15 +138,7 @@
                     countryIndex: 2,
                     cityIndex: 0,
                 },
-                results: [
-                    //recordDate: [],
-                    //memberNoList: [],
-                    //accountList: [],
-                    //countryList: [],
-                    //cityList: [],
-                    //nameList: [],
-                    //genderList: [],
-                ],
+                results: [],
             }
         },
 
@@ -175,12 +167,6 @@
                     this.conditions.selectedCountry = "",
                     this.conditions.serialNumber = ""
             },
-            //checkDate() {
-            //    if (this.conditions.beginDate > this.conditions.endDate) {
-            //        alert("結束日期不可小於起始日期")
-            //        this.conditions.endDate = ""
-            //    }
-            //},
 
             async getCity() {
                 var _this = this;
@@ -234,27 +220,6 @@
                         alert("刪除失敗")
                     }
                 }
-                //TEST
-
-                //let result = await $axiosPost(`${this.localRouter}?handler=Delete`, { MemberNo: MemberNo })
-                //console.log(result)
-                //.then(res=>{
-                //    if(res.status<300){
-                //        alert("成功")
-                //    }
-
-                //let result = await $axiosPost(this.localRouter+"handler=Delete",fd)
-                //try{
-                //    let fd = new FormData();
-                //    fd.append("MemberNo", this.conditions.serialNumber);
-                //    //let memberNo = this.conditions.serialNumber;
-                //    let result = await $axiosPost(`${this.localRouter}handler=Delete`, fd);
-                //    console.log(result);
-                //    alert("刪除成功");
-                //} catch (error) {
-                //    console.log(error);
-                //    alert("刪除失敗");
-                //}
             },
             async getSales() {
                 var _this = this;
