@@ -115,16 +115,6 @@ namespace MarioWebAPP.Pages
                         UpdateTime=@UpdateTime,
                         UpdateBy=@UpdateBy
                         where Account = @Account";
-            //var sql2 = @"update UserInfoMappingSales 
-            //            set Sales=@Sales,
-            //            UpdateTime=@UpdateTime,
-            //            UpdateBy=@UpdateBy,
-            //            where MemberNo=@MemberNo";
-            //var sql3 = @"update UserInfoMappingInterest
-            //            set InterestItem=@InterestItem,
-            //            UpdateTime=@UpdateTime,
-            //            UpdateBy=@UpdateBy,
-            //            where MemberNo=@MemberNo";
 
             var getSalesSql = @"select 
                                 Sales
@@ -135,6 +125,8 @@ namespace MarioWebAPP.Pages
                                 InterestItem
                                 from [UserInfoMappingInterest]
                                 where MemberNo=@MemberNo";
+
+            var finalResult=new Dictionary<string, object>();
 
             var updateTime = DateTime.Now;
             var updateBy = "System";
@@ -258,17 +250,26 @@ namespace MarioWebAPP.Pages
                                 (@MemberNo,@InterestItem,@UpdateTime,@UpdateBy)";
 
 
-
-            using (var con = new SqlConnection(conn.RookieServerContext))
+            try
             {
-                await con.ExecuteAsync(sql, memUpdate);
-                await con.ExecuteAsync(sqlStrAddSales, insertSales);
-                await con.ExecuteAsync(sqlStrDeleteSales, deleteSales);
-                await con.ExecuteAsync(sqlStrAddInterest, insertInter);
-                var result = await con.ExecuteAsync(sqlStrDeleteInterest, deleteInter);
-                return new JsonResult(result);
+                using (var con = new SqlConnection(conn.RookieServerContext))
+                {
+                    await con.ExecuteAsync(sql, memUpdate);
+                    await con.ExecuteAsync(sqlStrAddSales, insertSales);
+                    await con.ExecuteAsync(sqlStrDeleteSales, deleteSales);
+                    await con.ExecuteAsync(sqlStrAddInterest, insertInter);
+                    var result = await con.ExecuteAsync(sqlStrDeleteInterest, deleteInter);
+                    //return new JsonResult(result);
+                    //return new OkResult();
+
+                    finalResult.Add("result", "1");
+                }
+            }catch (Exception ex) { 
+            var emsg=ex.Message;
+                finalResult.Add("result", "0");
+                finalResult.Add("msg", emsg);
             }
-            return new OkResult();
+            return new JsonResult(finalResult);
         }
 
         public IActionResult OnPostGetMemberInterest(IFormCollection formcollection)

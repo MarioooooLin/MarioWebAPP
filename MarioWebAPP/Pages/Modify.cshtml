@@ -290,13 +290,13 @@
                 fd.append("Remark", _this.results.Remark)
                 fd.append("Sales",JSON.stringify(_this.results.Sales))
                 fd.append("Interest",JSON.stringify(_this.results.Interest))
-                let result = await $axiosPost(this.localRouter + "?handler=Update", fd)
-                //if (result == 1) {
-                //    alert("更新成功")
-                //    location.reload();
-                //} else {
-                //    alert("更新失敗")
-                //}
+                let finalResult = await $axiosPost(this.localRouter + "?handler=Update", fd)
+                if ( finalResult.result == 1) {
+                    alert("更新成功")
+                    location.reload();
+                } else {
+                    alert("更新失敗")
+                }
             }
 
         },
