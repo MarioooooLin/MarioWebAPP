@@ -43,10 +43,10 @@ namespace MarioWebAPP.Pages
             {
                 if (parameters.ParameterNames.Any())
                 {
-                    sql += "left join UserInfoMappingSales as b on a.MemberNo=b.MemberNo where Sales =@sales";
+                    sql += " left join UserInfoMappingSales as b on a.MemberNo=b.MemberNo where Sales =@sales ";
                 }
                 else{
-                    sql += "left join UserInfoMappingSales as b on a.MemberNo=b.MemberNo where Sales =@sales";
+                    sql += " left join UserInfoMappingSales as b on a.MemberNo=b.MemberNo where Sales =@sales ";
 
                 }
                 parameters.Add("@sales", sales);
@@ -70,11 +70,11 @@ namespace MarioWebAPP.Pages
             {
                 if (parameters.ParameterNames.Any())
                 {
-                    sql += "AND City=@city";
+                    sql += "AND City=@city ";
                 }
                 else //這個部分
                 {
-                    sql += " WHERE City = @city";
+                    sql += " WHERE City = @city ";
                 }
                 parameters.Add("@city", city);
             }
@@ -95,11 +95,11 @@ namespace MarioWebAPP.Pages
             {
                 if (parameters.ParameterNames.Any())
                 {
-                    sql += " AND a.MemberNo LIKE @serialNumber";
+                    sql += " AND a.MemberNo LIKE @serialNumber ";
                 }
                 else //這個部分
                 {
-                    sql += " WHERE a.MemberNo LIKE @serialNumber";
+                    sql += " WHERE a.MemberNo LIKE @serialNumber ";
                 }
                 parameters.Add("@serialNumber", $"%{serialNumber}%");
             }
@@ -127,19 +127,6 @@ namespace MarioWebAPP.Pages
                 return new JsonResult(result);
             }
         }
-
-
-        //public IActionResult OnPostGetSales()
-        //{
-        //    var conn = new DapperConnections.ConnectionOptions();
-        //    Configuration.GetSection(DapperConnections.ConnectionOptions.Position).Bind(conn);
-        //    var sql = "select Sales from SalesData";
-        //    using (var con = new SqlConnection(conn.RookieServerContext))
-        //    {
-        //        var result = con.Query<string>(sql).ToList();
-        //        return new JsonResult(result);
-        //    }
-        //}
 
         public IActionResult OnPostGetCountry()
         {
