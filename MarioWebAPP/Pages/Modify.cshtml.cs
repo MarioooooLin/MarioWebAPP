@@ -259,8 +259,6 @@ namespace MarioWebAPP.Pages
                     await con.ExecuteAsync(sqlStrDeleteSales, deleteSales);
                     await con.ExecuteAsync(sqlStrAddInterest, insertInter);
                     var result = await con.ExecuteAsync(sqlStrDeleteInterest, deleteInter);
-                    //return new JsonResult(result);
-                    //return new OkResult();
 
                     finalResult.Add("result", "1");
                 }

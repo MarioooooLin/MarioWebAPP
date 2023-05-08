@@ -56,7 +56,7 @@ namespace MarioWebAPP.Pages
             {
                 if (parameters.ParameterNames.Any())
                 {
-                    sql += "AND Account=@account";
+                    sql += " AND Account=@account";
                 }
                 else //這個部分
                 {
