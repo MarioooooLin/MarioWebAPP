@@ -116,65 +116,159 @@ namespace MarioWebAPP.Pages
                         UpdateBy=@UpdateBy
                         where Account = @Account";
             //var sql2 = @"update UserInfoMappingSales 
-            //            set Sales=@Sales
-            //            UpdateTime=@UpdateTime
-            //            UpdateBy=@UpdateBy
-            //            wherer MemberNo=@MemberNo";
-            var sql2 = @"update UserInfoMappingSales 
-                        set Sales=@Sales,
-                        UpdateTime=@UpdateTime,
-                        UpdateBy=@UpdateBy,
-                        where MemberNo=@MemberNo";
-            var sql3 = @"update UserInfoMappingInterest
-                        set InterestItem=@InterestItem,
-                        UpdateTime=@UpdateTime,
-                        UpdateBy=@UpdateBy,
-                        where MemberNo=@MemberNo";
+            //            set Sales=@Sales,
+            //            UpdateTime=@UpdateTime,
+            //            UpdateBy=@UpdateBy,
+            //            where MemberNo=@MemberNo";
+            //var sql3 = @"update UserInfoMappingInterest
+            //            set InterestItem=@InterestItem,
+            //            UpdateTime=@UpdateTime,
+            //            UpdateBy=@UpdateBy,
+            //            where MemberNo=@MemberNo";
+
+            var getSalesSql = @"select 
+                                Sales
+                                from [UserInfoMappingSales]
+                                where MemberNo=@MemberNo";
+
+            var getInterestSql = @"select
+                                InterestItem
+                                from [UserInfoMappingInterest]
+                                where MemberNo=@MemberNo";
 
             var updateTime = DateTime.Now;
             var updateBy = "System";
+            var oldSales = new List<string>();
+            var oldInterest = new List<string>();
             //var memData = new List<string>();
-            //var memSales = new List<string>();
-            //var memInterest = new List<string>();
+            var memSales = new List<string>();
+            var memInterest = new List<string>();
 
             //memData = JsonSerializer.Deserialize<List<string>>(formCollection["results"]);
-            //memSales = JsonSerializer.Deserialize<List<string>>(formCollection["Sales"]);
-            //memInterest = JsonSerializer.Deserialize<List<string>>(formCollection["Interest"]);
+            memSales = JsonSerializer.Deserialize<List<string>>(formCollection["Sales"]);
+            memInterest = JsonSerializer.Deserialize<List<string>>(formCollection["Interest"]);
 
-            var memDatas=new List<UpdateData>();
+            var memDatas = new List<UpdateData>();
 
+            //處理一般DATA的部分
             var memUpdate = new UpdateData()
             {
                 Name = formCollection["Name"],
                 Country = formCollection["Country"],
-                City= formCollection["City"],
-                Gender= formCollection["Gender"],
-                Remark= formCollection["Remark"],
-                UpdateTime=updateTime,
-                UpdateBy=updateBy,
+                City = formCollection["City"],
+                Gender = formCollection["Gender"],
+                Remark = formCollection["Remark"],
+                UpdateTime = updateTime,
+                UpdateBy = updateBy,
                 Account = formCollection["Account"]
             };
+
+            //處理SALES的部分
+            using (var con = new SqlConnection(conn.RookieServerContext))
+            {
+                var result = con.Query<string>(getSalesSql, new
+                {
+                    MemberNo = formCollection["MemberNo"],
+                });
+
+                oldSales = new List<string>(result);
+            }
+
+            var addSales = memSales.Except(oldSales).ToList();
+            var deleSales = oldSales.Except(memSales).ToList();
+
+            var insertSales = new List<SalesList>();
+            var deleteSales = new List<SalesList>();
+
+            for (var i = 0; i < addSales.Count; i++)
+            {
+                insertSales.Add(
+                    new SalesList()
+                    {
+                        MemberNo = formCollection["MemberNo"],
+                        UpdateBy = "System",
+                        UpdateTime = updateTime,
+                        Sales = addSales[i],
+                    });
+            }
+
+            for (var i = 0; i < deleSales.Count; i++)
+            {
+                deleteSales.Add(
+                    new SalesList()
+                    {
+                        MemberNo = formCollection["MemberNo"],
+                        Sales = deleSales[i],
+                    }
+                    );
+            }
+
+            //處理INTEREST的部分
+            using (var con = new SqlConnection(conn.RookieServerContext))
+            {
+                var result = con.Query<string>(getInterestSql, new
+                {
+                    MemberNo = formCollection["MemberNo"],
+                });
+                oldInterest = new List<string>(result);
+            }
+
+            var addInter = memInterest.Except(oldInterest).ToList();
+            var deleInter = oldInterest.Except(memInterest).ToList();
+
+            var insertInter = new List<Interest>();
+            var deleteInter = new List<Interest>();
+
+            for (var i = 0; i < addInter.Count; i++)
+            {
+                insertInter.Add(
+                    new Interest()
+                    {
+                        MemberNo = formCollection["MemberNo"],
+                        UpdateBy = "System",
+                        UpdateTime = updateTime,
+                        InterestItem = addInter[i],
+                    });
+            }
+
+            for (var i = 0; i < deleInter.Count; i++)
+            {
+                deleteInter.Add(new Interest()
+                {
+                    MemberNo = formCollection["MemberNo"],
+                    InterestItem = deleInter[i],
+                });
+            }
+
+            //SALE+INTEREST的SQL
+            var sqlStrDeleteSales = @"delete from UserInfoMappingSales 
+                                        where MemberNo=@MemberNo
+                                        and Sales=@Sales";
+            var sqlStrAddSales = @"insert into UserInfoMappingSales
+                                (MemberNo,Sales,UpdateTime,UpdateBy) 
+                                values 
+                                (@MemberNo,@Sales,@UpdateTime,@UpdateBy)";
+
+            var sqlStrDeleteInterest = @"delete from UserInfoMappingInterest 
+                                        where MemberNo=@MemberNo
+                                        and InterestItem=@InterestItem";
+            var sqlStrAddInterest = @"insert into UserInfoMappingInterest
+                                (MemberNo,InterestItem,UpdateTime,UpdateBy) 
+                                values 
+                                (@MemberNo,@InterestItem,@UpdateTime,@UpdateBy)";
+
 
 
             using (var con = new SqlConnection(conn.RookieServerContext))
             {
-                var result = await con.ExecuteAsync(sql, memUpdate);
-                ////var result = con.Execute(sql, memUpdate);
+                await con.ExecuteAsync(sql, memUpdate);
+                await con.ExecuteAsync(sqlStrAddSales, insertSales);
+                await con.ExecuteAsync(sqlStrDeleteSales, deleteSales);
+                await con.ExecuteAsync(sqlStrAddInterest, insertInter);
+                var result = await con.ExecuteAsync(sqlStrDeleteInterest, deleteInter);
                 return new JsonResult(result);
-
-                //var result = await con.ExecuteAsync(sql,new
-                //{
-                //    Name= formCollection["Name"],
-                //    Country = formCollection["Country"],
-                //    City = formCollection["City"],
-                //    Gender = formCollection["Gender"],
-                //    Remark = formCollection["Remark"],
-                //    UpdateTime=updateTime,
-                //    UpdateBy=updateBy,
-                //    Account = formCollection["Account"]
-                //});
             }
-            //return new OkResult();
+            return new OkResult();
         }
 
         public IActionResult OnPostGetMemberInterest(IFormCollection formcollection)

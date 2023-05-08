@@ -95,11 +95,11 @@ namespace MarioWebAPP.Pages
             {
                 if (parameters.ParameterNames.Any())
                 {
-                    sql += " AND MemberNo LIKE @serialNumber";
+                    sql += " AND a.MemberNo LIKE @serialNumber";
                 }
                 else //這個部分
                 {
-                    sql += " WHERE MemberNo LIKE @serialNumber";
+                    sql += " WHERE a.MemberNo LIKE @serialNumber";
                 }
                 parameters.Add("@serialNumber", $"%{serialNumber}%");
             }

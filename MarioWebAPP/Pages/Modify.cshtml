@@ -185,7 +185,9 @@
                     UpdateBy: "",
                     Sales: [],
                     Interest: [],
-                    Remark: ""
+                    Remark: "",
+                    NewSales:[],
+                    NewInterest:[]
                 }
 
             }
@@ -289,12 +291,12 @@
                 fd.append("Sales",JSON.stringify(_this.results.Sales))
                 fd.append("Interest",JSON.stringify(_this.results.Interest))
                 let result = await $axiosPost(this.localRouter + "?handler=Update", fd)
-                if (result == 1) {
-                    alert("更新成功")
-                    location.reload();
-                } else {
-                    alert("更新失敗")
-                }
+                //if (result == 1) {
+                //    alert("更新成功")
+                //    location.reload();
+                //} else {
+                //    alert("更新失敗")
+                //}
             }
 
         },
