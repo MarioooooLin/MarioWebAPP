@@ -29,7 +29,7 @@
                         @*國家*@
                         <label for="">Country <span class="text-danger fw-bold">*</span></label>
 
-                        <select name="Country" id="country" v-model="results.Country" class="d-block form-select" >
+                        <select name="Country" id="country" v-model="results.Country" class="d-block form-select">
                             <option value="-Select-" selected disabled>-Select-</option>
                             <option :value="cou" v-for="(cou, index) in countryList" :key="index">{{cou}}</option>
                         </select>
@@ -39,7 +39,7 @@
                         @*城市*@
                         <label for="City">City <span class="text-danger fw-bold">*</span></label>
 
-                        <select name="City" id="city" v-model="results.City" class="d-block form-select" >
+                        <select name="City" id="city" v-model="results.City" class="d-block form-select">
                             <option value="" selected disabled>-Select-</option>
                             <option :value="cit" v-for="(cit, index) in cityList" :key="index">{{cit}}</option>
                         </select>
@@ -85,8 +85,8 @@
                                  v-for="(sa,index) in results.Sales"
                                  :key="index">
                                 {{sa}}
-                                <button @@click.prevent="removeSales(index)" class="btn btn-outline-danger btn-sm ">X</button>
-                                
+                                <button @@click.prevent="removeSales(index)" class="btn btn-outline-danger btn-sm "><span class="fw-bold ">X</span></button>
+
                             </div>
                         </div>
                     </div>
@@ -156,7 +156,7 @@
                     <!-- <input type="checkbox" class="form-check-input" id="exampleCheck1" />
                     <label class="form-check-label" for="exampleCheck1">Check me out</label> -->
                 </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="button" @@click="submit" class="btn btn-primary">Submit</button>
                 @*<button type="reset" class="btn btn-primary">Cancel</button>*@
             </form>
         </div>
@@ -167,11 +167,11 @@
     const vm = Vue.createApp({
         data() {
             return {
-                selectedSales:"",
+                selectedSales: "",
                 localRouter: "",
                 cityList: "",
                 countryList: "",
-                salesList:"",
+                salesList: "",
                 results: {
                     MemberNo: "",
                     CreateDate: "",
@@ -185,7 +185,7 @@
                     UpdateBy: "",
                     Sales: [],
                     Interest: [],
-                    Remark:""
+                    Remark: ""
                 }
 
             }
@@ -206,7 +206,7 @@
         async created() {
             this.localRouter = await window.location.pathname;
             console.log(this.localRouter);
-             this.getSales();
+            this.getSales();
         },
         methods: {
             removeSales(index) {
@@ -225,7 +225,7 @@
                 this.results.Country = result[0].Country;
                 this.results.City = result[0].City;
                 this.results.Gender = result[0].Gender;
-                this.results.Remark=result[0].Remark;
+                this.results.Remark = result[0].Remark;
             },
             async getMemberSales() {
                 var _this = this;
@@ -275,11 +275,26 @@
             removeSales(index) {
                 this.results.Sales.splice(index, 1)
             },
-            async submit(){
-                var _this=this;
-                let fd=new FormData();
-                fd.append("")
-
+            async submit() {
+                var _this = this;
+                let fd = new FormData();
+                fd.append("results", JSON.stringify(_this.results))
+                fd.append("Account",_this.results.Account)
+                fd.append("MemberNo", _this.results.MemberNo)
+                fd.append("Name", _this.results.Name)
+                fd.append("Country", _this.results.Country)
+                fd.append("City", _this.results.City)
+                fd.append("Gender", _this.results.Gender)
+                fd.append("Remark", _this.results.Remark)
+                fd.append("Sales",JSON.stringify(_this.results.Sales))
+                fd.append("Interest",JSON.stringify(_this.results.Interest))
+                let result = await $axiosPost(this.localRouter + "?handler=Update", fd)
+                if (result == 1) {
+                    alert("更新成功")
+                    location.reload();
+                } else {
+                    alert("更新失敗")
+                }
             }
 
         },

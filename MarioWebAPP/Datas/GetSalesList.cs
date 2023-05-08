@@ -53,5 +53,9 @@
         public string InterestItem { get; set; }
         public string Remark { get; set; }
         public DateTime UpdateTime { get; set; }
+
+        public string UpdateBy { get; set; }
+
+        public string Account { get; set; }
     }
 }

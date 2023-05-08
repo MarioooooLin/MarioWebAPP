@@ -82,11 +82,11 @@ namespace MarioWebAPP.Pages
             {
                 if (parameters.ParameterNames.Any())
                 {
-                    sql += " AND CreateDate >= @startDate AND CreateDate <= @endDate";
+                    sql += " AND CreateDate >=DATEADD(DAY,DATEDIFF(day,'',@startDate),'')  AND CreateDate <= DATEADD(day,DATEDIFF(day,'',@endDate)+1,'') ";
                 }
                 else  //這個部分
                 {
-                    sql += " WHERE CreateDate >= @startDate AND CreateDate <= @endDate";
+                    sql += " WHERE CreateDate >= DATEADD(DAY,DATEDIFF(day,'',@startDate),'') AND CreateDate <= DATEADD(day,DATEDIFF(day,'',@endDate)+1,'')";
                 }
                 parameters.Add("@startDate", beginDate);
                 parameters.Add("@endDate", endDate);

@@ -19,8 +19,8 @@
                                    id="recordDate"
                                    aria-describedby=""
                                    placeholder="Date"
-                                   v-model="conditions.beginDate" 
-                                   @@change="checkDate()" />
+                                   v-model="conditions.beginDate"
+                                    />
                             <span class="h3">~</span>
                             <input type="date"
                                    class="form-control"
@@ -28,7 +28,7 @@
                                    aria-describedby=""
                                    placeholder="Date"
                                    v-model="conditions.endDate"
-                                   @@change="checkDate()" />
+                                   />
                         </div>
                     </div>
                     <div class="form-group col-6">
@@ -78,8 +78,9 @@
                 </div>
                 <div class="row col-2 mx-auto">
                     <button class="px-2 py-1 btn btn-primary mt-3" @@click="searchData()">Search</button>
-@*                    <button class="px-2 py-1 btn btn-primary mt-3" @@click="cancel()">Cancel</button>
-*@                </div>
+                    @*                    <button class="px-2 py-1 btn btn-primary mt-3" @@click="cancel()">Cancel</button>
+                    *@
+                </div>
             </form>
         </div>
         <hr />
@@ -167,19 +168,19 @@
         },
 
         methods: {
-            cancel(){
-                this.conditions.beginDate="",
-                this.conditions.endDate="",
-                this.conditions.selectedCity="",
-                this.conditions.selectedCountry = "",
-                this.conditions.serialNumber=""
+            cancel() {
+                this.conditions.beginDate = "",
+                    this.conditions.endDate = "",
+                    this.conditions.selectedCity = "",
+                    this.conditions.selectedCountry = "",
+                    this.conditions.serialNumber = ""
             },
-            checkDate(){
-                if (this.conditions.beginDate == this.conditions.endDate || this.conditions.beginDate > this.conditions.endDate) {
-                    alert("結束日期至少大於起始日期一天")
-                    this.conditions.endDate=""
-                }
-            },
+            //checkDate() {
+            //    if (this.conditions.beginDate > this.conditions.endDate) {
+            //        alert("結束日期不可小於起始日期")
+            //        this.conditions.endDate = ""
+            //    }
+            //},
 
             async getCity() {
                 var _this = this;
@@ -197,7 +198,10 @@
 
                 if (this.conditions.beginDate == "" && this.conditions.endDate == "" && this.conditions.account == "" && this.conditions.selectedCity == "" && this.conditions.sales == "" && this.conditions.serialNumber == "") {
                     alert("請輸入至少一項條件")
-                } 
+                } else if (this.conditions.beginDate > this.conditions.endDate){
+                    alert("結束日期不可小於起始日期")
+                    this.conditions.endDate = ""
+                }
                 else {
                     var _this = this;
                     let fd = new FormData();
@@ -206,7 +210,7 @@
                     fd.append("account", this.conditions.account)
                     fd.append("serialNumber", this.conditions.serialNumber)
                     fd.append("selectedCity", this.conditions.selectedCity)
-                    fd.append("sales",this.conditions.sales)
+                    fd.append("sales", this.conditions.sales)
                     let result = await $axiosPost(this.localRouter + "?handler=SearchResult", fd)
                     console.log(result)
                     _this.results = result;

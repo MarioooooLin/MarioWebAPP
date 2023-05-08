@@ -7,6 +7,7 @@ using Dapper;
 using System.Linq;
 using System.Collections.Generic;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using System.Text.Json;
 
 namespace MarioWebAPP.Pages
 {
@@ -101,32 +102,79 @@ namespace MarioWebAPP.Pages
             }
         }
 
-        public IActionResult OnPostUpdate(IFormCollection formCollection)
+        public async Task<IActionResult> OnPostUpdate(IFormCollection formCollection)
         {
-            var country = formCollection["Country"];
-            var city = formCollection["City"];
-            var gender = formCollection["Gender"];
-            var name = formCollection["Name"];
 
             var conn = new DapperConnections.ConnectionOptions();
             Configuration.GetSection(DapperConnections.ConnectionOptions.Position).Bind(conn);
             var sql = @"update UserInfo set Name=@Name,
                         Country=@Country,
                         City=@City,
-                        Gender=@Gender,                                              
+                        Gender=@Gender,  
+                        Remark=@Remark,
+                        UpdateTime=@UpdateTime,
+                        UpdateBy=@UpdateBy
                         where Account = @Account";
+            //var sql2 = @"update UserInfoMappingSales 
+            //            set Sales=@Sales
+            //            UpdateTime=@UpdateTime
+            //            UpdateBy=@UpdateBy
+            //            wherer MemberNo=@MemberNo";
+            var sql2 = @"update UserInfoMappingSales 
+                        set Sales=@Sales,
+                        UpdateTime=@UpdateTime,
+                        UpdateBy=@UpdateBy,
+                        where MemberNo=@MemberNo";
+            var sql3 = @"update UserInfoMappingInterest
+                        set InterestItem=@InterestItem,
+                        UpdateTime=@UpdateTime,
+                        UpdateBy=@UpdateBy,
+                        where MemberNo=@MemberNo";
+
+            var updateTime = DateTime.Now;
+            var updateBy = "System";
+            //var memData = new List<string>();
+            //var memSales = new List<string>();
+            //var memInterest = new List<string>();
+
+            //memData = JsonSerializer.Deserialize<List<string>>(formCollection["results"]);
+            //memSales = JsonSerializer.Deserialize<List<string>>(formCollection["Sales"]);
+            //memInterest = JsonSerializer.Deserialize<List<string>>(formCollection["Interest"]);
+
+            var memDatas=new List<UpdateData>();
+
+            var memUpdate = new UpdateData()
+            {
+                Name = formCollection["Name"],
+                Country = formCollection["Country"],
+                City= formCollection["City"],
+                Gender= formCollection["Gender"],
+                Remark= formCollection["Remark"],
+                UpdateTime=updateTime,
+                UpdateBy=updateBy,
+                Account = formCollection["Account"]
+            };
+
+
             using (var con = new SqlConnection(conn.RookieServerContext))
             {
+                var result = await con.ExecuteAsync(sql, memUpdate);
+                ////var result = con.Execute(sql, memUpdate);
+                return new JsonResult(result);
 
-                var result = con.Execute(sql, new
-                {
-                    Name = name,
-                    Country = country,
-                    City = city,
-                    Gender = gender
-                });
+                //var result = await con.ExecuteAsync(sql,new
+                //{
+                //    Name= formCollection["Name"],
+                //    Country = formCollection["Country"],
+                //    City = formCollection["City"],
+                //    Gender = formCollection["Gender"],
+                //    Remark = formCollection["Remark"],
+                //    UpdateTime=updateTime,
+                //    UpdateBy=updateBy,
+                //    Account = formCollection["Account"]
+                //});
             }
-            return new JsonResult(sql);
+            //return new OkResult();
         }
 
         public IActionResult OnPostGetMemberInterest(IFormCollection formcollection)

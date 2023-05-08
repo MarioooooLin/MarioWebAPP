@@ -150,6 +150,9 @@ namespace MarioWebAPP.Pages
                 {
                     var result = await con.ExecuteAsync(sql2, sales);
                     var result1 = await con.ExecuteAsync(sql3, interest);
+
+                    //return new JsonResult(result); 
+                    //return new JsonResult(result1);
                     
                 }
                 else
@@ -157,7 +160,7 @@ namespace MarioWebAPP.Pages
                     return new BadRequestResult();
                 }
             }
-
+            
             return new JsonResult(success);
         }
 
