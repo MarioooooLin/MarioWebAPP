@@ -39,6 +39,8 @@ namespace MarioWebAPP.Pages
             //@"SELECT CreateDate,Name,Account,Country,City,Gender,MemberNo FROM UserInfo where 1=1"  可不用寫下面的else部分
             var parameters = new DynamicParameters();
 
+            var results=new Dictionary<string, object>();
+
             if (!string.IsNullOrEmpty(sales))
             {
                 if (parameters.ParameterNames.Any())
@@ -109,8 +111,16 @@ namespace MarioWebAPP.Pages
             {
 
                 var result = con.Query(sql, parameters).ToList();
-
-                return new JsonResult(result);
+                if (result.Count == 0)
+                {
+                    results.Add("result", "0");
+                }
+                else
+                {
+                    results.Add("result", "1");
+                    results.Add("data",result.ToArray());   
+                }
+                return new JsonResult(results);
             }
         }
 

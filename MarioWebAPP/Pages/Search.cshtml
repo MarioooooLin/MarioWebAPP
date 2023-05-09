@@ -199,8 +199,11 @@
                     fd.append("sales", this.conditions.sales)
                     let result = await $axiosPost(this.localRouter + "?handler=SearchResult", fd)
                     console.log(result)
-                    _this.results = result;
-                    console.log(_this.results)
+                    if(result.result==0){
+                        alert("查無資料")
+                    }else{
+                        _this.results = result.data;
+                    }
                 }
             },
 

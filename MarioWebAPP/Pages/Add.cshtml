@@ -165,7 +165,7 @@
                 </div>
 
                 <div class="form-group form-check"></div>
-                <button type="submit" class="btn btn-primary mx-3" @@click="submit">Submit</button>
+                <button type="button" class="btn btn-primary mx-3" @@click="submit">Submit</button>
                 @*                <button type="reset" class="btn btn-primary mx-3" @@click="cancel()">Cancel</button>
                 *@
             </form>
@@ -239,26 +239,29 @@
                 if (this.account == "" || this.name == "" || this.selectedCountry == "" || this.selectedCity == "" || this.salesList == []) {
                     alert("請完成紅星部分")
                 } else {
-                    try {
-                        var _this = this;
-                        let fd = new FormData();
-                        let salesFD = new FormData();
-                        fd.append("account", _this.account)
-                        fd.append("name", _this.name)
-                        fd.append("country", _this.selectedCountry)
-                        fd.append("city", _this.selectedCity)
-                        fd.append("gender", _this.gender)
-                        fd.append("remark", _this.remark)
-                        fd.append("salesList",JSON.stringify(_this.salesList))
-                        fd.append("interested",JSON.stringify(_this.interested))
-                        let result = await $axiosPost(this.localRouter + "?handler=Submit", fd);
-                        console.log(result);
-                        alert(result)
+                    var _this = this;
+                    let fd = new FormData();
+                    let salesFD = new FormData();
+                    fd.append("account", _this.account)
+                    fd.append("name", _this.name)
+                    fd.append("country", _this.selectedCountry)
+                    fd.append("city", _this.selectedCity)
+                    fd.append("gender", _this.gender)
+                    fd.append("remark", _this.remark)
+                    fd.append("salesList", JSON.stringify(_this.salesList))
+                    fd.append("interested", JSON.stringify(_this.interested))
+                    let result = await $axiosPost(this.localRouter + "?handler=Submit", fd);
+                    console.log(result)
+                    console.log(result.result)
+                    if(result.result==1){
+                        alert("新增成功")
                         location.reload()
-                    }
-                    catch (error) {
+                    }else{
                         alert("新增失敗")
                     }
+                    //console.log(result);
+                    //alert(result)
+                    
                 }
             },
             cancel() {

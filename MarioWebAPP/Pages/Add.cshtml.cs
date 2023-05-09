@@ -77,6 +77,8 @@ namespace MarioWebAPP.Pages
         public async Task<IActionResult> OnPostSubmit(IFormCollection memberCollection)
         {
             //NEW
+            var results=new Dictionary<string, string>();
+
             var conn = new DapperConnections.ConnectionOptions();
             Configuration.GetSection(DapperConnections.ConnectionOptions.Position).Bind(conn);
             var sql = @"insert into UserInfo 
@@ -151,17 +153,17 @@ namespace MarioWebAPP.Pages
                     var result = await con.ExecuteAsync(sql2, sales);
                     var result1 = await con.ExecuteAsync(sql3, interest);
 
-                    //return new JsonResult(result); 
-                    //return new JsonResult(result1);
+                    results.Add("result", "1");
                     
                 }
                 else
                 {
-                    return new BadRequestResult();
+                    //return new BadRequestResult();
+                    results.Add("result", "0");
                 }
             }
             
-            return new JsonResult(success);
+            return new JsonResult(results);
         }
 
 
