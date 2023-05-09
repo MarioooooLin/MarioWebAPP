@@ -236,7 +236,7 @@
             },
 
             async submit() {
-                if (this.account == "" || this.name == "" || this.selectedCountry == "" || this.selectedCity == "" || this.salesList == []) {
+                if (this.account == "" || this.name == "" || this.selectedCountry == "" || this.selectedCity == "" || this.salesList.length == 0) {
                     alert("請完成紅星部分")
                 } else {
                     var _this = this;

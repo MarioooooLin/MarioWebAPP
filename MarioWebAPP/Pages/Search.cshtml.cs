@@ -31,6 +31,7 @@ namespace MarioWebAPP.Pages
             var city = formCollection["selectedCity"];
             var sales = formCollection["sales"];
             var account = formCollection["account"];
+            var country = formCollection["selectedCountry"];
             //var result=new Dictionary<string, object>();
             var conn = new DapperConnections.ConnectionOptions();
             Configuration.GetSection(DapperConnections.ConnectionOptions.Position).Bind(conn);
@@ -79,6 +80,19 @@ namespace MarioWebAPP.Pages
                     sql += " WHERE City = @city ";
                 }
                 parameters.Add("@city", city);
+            }
+
+            if (!string.IsNullOrEmpty(country))
+            {
+                if (parameters.ParameterNames.Any())
+                {
+                    sql += "AND Country=@country ";
+                }
+                else //這個部分
+                {
+                    sql += " WHERE Country = @country ";
+                }
+                parameters.Add("@country", country);
             }
             if (!string.IsNullOrEmpty(beginDate) && !string.IsNullOrEmpty(endDate))
             {
@@ -158,7 +172,9 @@ namespace MarioWebAPP.Pages
             var mem = formcollection["MemberNo"].ToString();
             var conn = new DapperConnections.ConnectionOptions();
             Configuration.GetSection(DapperConnections.ConnectionOptions.Position).Bind(conn);
-            var sql = @"DELETE FROM UserInfo WHERE MemberNo=@MemberNumber";
+            var sql = @"DELETE FROM UserInfo WHERE MemberNo=@MemberNumber;
+                        delete from UserInfoMappingSales where MemberNo=@MemberNumber;
+                        delete from UserInfoMappingInterest where MemberNo=@MemberNumber";
             using (var con = new SqlConnection(conn.RookieServerContext))
             {
                 con.Execute(sql, new { MemberNumber = mem });

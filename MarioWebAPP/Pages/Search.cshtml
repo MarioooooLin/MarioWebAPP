@@ -76,10 +76,10 @@
                         <input type="text" class="form-control" id="serialNumber" placeholder="Account" v-model="conditions.account" />
                     </div>
                 </div>
-                <div class="row col-2 mx-auto">
-                    <button class="px-2 py-1 btn btn-primary mt-3" @@click="searchData()">Search</button>
-                    @*                    <button class="px-2 py-1 btn btn-primary mt-3" @@click="cancel()">Cancel</button>
-                    *@
+                <div class="row col-2 mx-auto ">
+                    <button class="px-2 py-1 btn btn-primary mt-3 col-6 " @@click="searchData()">Search</button>
+                    <button class="px-2 py-1 btn btn-primary mt-3 col-6 " @@click="cancel()">Cancel</button>
+                    
                 </div>
             </form>
         </div>
@@ -161,11 +161,12 @@
 
         methods: {
             cancel() {
-                this.conditions.beginDate = "",
-                    this.conditions.endDate = "",
-                    this.conditions.selectedCity = "",
-                    this.conditions.selectedCountry = "",
-                    this.conditions.serialNumber = ""
+                //this.conditions.beginDate = "",
+                //    this.conditions.endDate = "",
+                //    this.conditions.selectedCity = "",
+                //    this.conditions.selectedCountry = "",
+                //    this.conditions.serialNumber = ""
+                location.reload();
             },
 
             async getCity() {
@@ -182,7 +183,7 @@
             },
             async searchData() {
 
-                if (this.conditions.beginDate == "" && this.conditions.endDate == "" && this.conditions.account == "" && this.conditions.selectedCity == "" && this.conditions.sales == "" && this.conditions.serialNumber == "") {
+                if (this.conditions.beginDate == "" && this.conditions.endDate == "" && this.conditions.account == "" && this.conditions.selectedCity == "" && this.conditions.sales == "" && this.conditions.serialNumber == "" && this.conditions.selectedCountry == "") {
                     alert("請輸入至少一項條件")
                 } else if (this.conditions.beginDate > this.conditions.endDate){
                     alert("結束日期不可小於起始日期")
@@ -196,6 +197,7 @@
                     fd.append("account", this.conditions.account)
                     fd.append("serialNumber", this.conditions.serialNumber)
                     fd.append("selectedCity", this.conditions.selectedCity)
+                    fd.append("selectedCountry",this.conditions.selectedCountry)
                     fd.append("sales", this.conditions.sales)
                     let result = await $axiosPost(this.localRouter + "?handler=SearchResult", fd)
                     console.log(result)
