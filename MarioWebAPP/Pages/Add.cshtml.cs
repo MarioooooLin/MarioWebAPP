@@ -19,6 +19,9 @@ namespace MarioWebAPP.Pages
         }
         public void OnGet()
         {
+            string queryResult = GetSqlQuery("query1");
+            Console.WriteLine(queryResult);
+
             var conn = new DapperConnections.ConnectionOptions();
             Configuration.GetSection(DapperConnections.ConnectionOptions.Position).Bind(conn);
             using (var con = new SqlConnection(conn.RookieServerContext))
@@ -28,17 +31,60 @@ namespace MarioWebAPP.Pages
             }
         }
 
+        public string GetSqlQuery(string x)
+        {
+            string sqlQuery = string.Empty;
+            //string connectionString = ""; 
+
+            switch (x)
+            {
+                case "GetSales":
+                    sqlQuery = "select Sales from SalesData";
+                    break;
+                case "GetCountry":
+                    sqlQuery = "select Country from CountryInfo group by Country having count(*) > 1 ";
+                    break;
+                case "GetCity":
+                    sqlQuery = "select City from CountryInfo where Country = @countries";
+                    break;
+                case "SubmitUser":
+                    sqlQuery = @"insert into UserInfo (MemberNo,CreateDate,Name,Account,Country,City,Gender,Remark,UpdateTime,UpdateBy) 
+                                values                 
+                                (@MemberNo,@CreateDate,@Name,@Account,@Country,@City,@Gender,@Remark,@UpdateTime,@UpdateBy)";
+                    break;
+                case "SubmitInterest":
+                    sqlQuery = @"insert into UserInfoMappingInterest
+                                (MemberNo,UpdateTime,UpdateBy,InterestItem) 
+                                values 
+                                (@MemberNo,@UpdateTime,@UpdateBy,@InterestItem)";
+                    break;
+                case "SubmitSales":
+                    sqlQuery = @"insert into UserInfoMappingSales 
+                                (MemberNo,Sales,UpdateTime,UpdateBy) 
+                                values 
+                                (@MemberNo,@Sales,@UpdateTime,@UpdateBy)";
+                    break;
+                case "SetID":
+                    sqlQuery = @"select max(cast(substring(MemberNo,12,3) as int)) from UserInfo where MemberNo like @Prefix";
+                    break;
+
+                default:
+                    return "Query not found.";
+            }
+            return sqlQuery;
+        }
 
 
-        [HttpPost]
+            [HttpPost]
         public IActionResult OnPostGetSales()
         {
             var conn = new DapperConnections.ConnectionOptions();
             Configuration.GetSection(DapperConnections.ConnectionOptions.Position).Bind(conn);
-            var sql = "select Sales from SalesData";
+            var sqlTest= GetSqlQuery("GetSales");
+            //var sql = "select Sales from SalesData";
             using (var con = new SqlConnection(conn.RookieServerContext))
             {
-                var result = con.Query<string>(sql).ToList();
+                var result = con.Query<string>(sqlTest).ToList();
                 return new JsonResult(result);
             }
         }
